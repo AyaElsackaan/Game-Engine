@@ -10,7 +10,7 @@
 #include "Component.h"
 class TransformComponent: public Component {
 private:
-    glm::vec3 postion;
+    glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
     //???parent

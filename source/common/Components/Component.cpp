@@ -7,3 +7,7 @@
 Entity *Component::getCurrentEntity() {
     return this->current_entity;
 }
+
+int Component::getOrder() {
+    return this->order;
+}

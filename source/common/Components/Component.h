@@ -11,10 +11,12 @@
 class Component {
 private:
     Entity * current_entity;
+    int order;
 public:
     Entity* getCurrentEntity();
+    int getOrder();
 
-    virtual void onStartApp() = 0; //virual/pure virtual>> to be modified
+    virtual void onStartApp() = 0; //virtual/pure virtual>> to be modified
     virtual void onStartState()=0;
     virtual void onUpdate()=0;
     virtual void onDeleteApp()=0;

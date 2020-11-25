@@ -5,9 +5,16 @@
 #ifndef GFX_LAB_ENTITY_H
 #define GFX_LAB_ENTITY_H
 
+#include "Components/Component.h"
+#include <bits/stdc++.h>
 
 class Entity {
-
+private:
+    std::map <int, Component> component_list;
+public:
+    std::map <int, Component> getComponents();
+    void addComponent(Component new_comp);
+    void removeComponent(/*to be added*/);
 };
 
 

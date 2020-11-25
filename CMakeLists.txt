@@ -33,7 +33,7 @@ set(VENDOR_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})
 set(COMMON_SOURCES
         source/common/application.cpp
         source/common/shader.cpp
-        source/common/mesh/mesh-utils.cpp source/common/Components/Component.cpp source/common/Components/Component.h source/common/Entity.cpp source/common/Entity.h)
+        source/common/mesh/mesh-utils.cpp source/common/Components/Component.cpp source/common/Components/Component.h source/common/Entity.cpp source/common/Entity.h source/common/Components/TransformComponent.cpp source/common/Components/TransformComponent.h)
 # Define the directories in which to search for the included headers
 include_directories(
         source/common

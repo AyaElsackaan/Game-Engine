@@ -13,12 +13,13 @@ private:
     Entity * current_entity;
     int order;
 public:
+    Component(Entity* e, int ord);
     Entity* getCurrentEntity();
     int getOrder();
 
     virtual void onStartApp() = 0; //virtual/pure virtual>> to be modified
     virtual void onStartState()=0;
-    virtual void onUpdate()=0;
+    virtual void onUpdate()=0;  //frames
     virtual void onDeleteApp()=0;
     virtual void onDeleteState()=0;
 

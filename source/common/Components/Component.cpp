@@ -11,3 +11,8 @@ Entity *Component::getCurrentEntity() {
 int Component::getOrder() {
     return this->order;
 }
+
+Component::Component(Entity *e, int ord) {
+    this->current_entity=e;
+    this->order=ord;
+}

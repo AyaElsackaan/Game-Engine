@@ -10,10 +10,11 @@
 
 class Entity {
 private:
-    std::map <int, Component> component_list;
+    std::map <int, Component*> component_list;
+    //int ID;
 public:
-    std::map <int, Component> getComponents();
-    void addComponent(Component new_comp);
+    std::map <int, Component*> getComponents();
+    void addComponent(Component* new_comp);
     void removeComponent(/*to be added*/);
 };
 

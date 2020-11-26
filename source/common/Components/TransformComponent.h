@@ -13,11 +13,13 @@ private:
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
-    //???parent
-    /*
-     * Parent: It can be a pointer to its parent entity or the transform component of it’s parent entity. For data oriented ECS, it can be the id (an integer) of the parent entity. This is used to define the scene graph.
-     */
+
+
+
 public:
+    TransformComponent( Entity *e, int ord, glm::vec3 pos, glm::vec3 rot,
+                       glm::vec3 sc);
+    glm:: mat4 to_mat4() const;
      void onStartApp() override ; //virtual/pure virtual>> to be modified
      void onStartState() override;
      void onUpdate() override;

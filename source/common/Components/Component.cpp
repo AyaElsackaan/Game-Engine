@@ -4,11 +4,11 @@
 
 #include "Component.h"
 
-Entity *Component::getCurrentEntity() {
+Entity *Component::getCurrentEntity() const {
     return this->current_entity;
 }
 
-int Component::getOrder() {
+int Component::getOrder() const{
     return this->order;
 }
 

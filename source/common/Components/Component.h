@@ -14,8 +14,8 @@ private:
     int order;
 public:
     Component(Entity* e, int ord);
-    Entity* getCurrentEntity();
-    int getOrder();
+    Entity* getCurrentEntity() const;
+    int getOrder() const;
 
     virtual void onStartApp() = 0; //virtual/pure virtual>> to be modified
     virtual void onStartState()=0;

@@ -4,7 +4,7 @@
 
 #include "Entity.h"
 
-std::map<int, Component*> Entity::getComponents() {
+std::map<int, Component*> Entity::getComponents() const{
     return this->component_list;
 }
 

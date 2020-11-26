@@ -13,7 +13,7 @@ private:
     std::map <int, Component*> component_list;
     //int ID;
 public:
-    std::map <int, Component*> getComponents();
+    std::map <int, Component*> getComponents() const;
     void addComponent(Component* new_comp);
     void removeComponent(/*to be added*/);
 };

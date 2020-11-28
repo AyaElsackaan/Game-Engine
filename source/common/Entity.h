@@ -6,8 +6,9 @@
 #define GFX_LAB_ENTITY_H
 
 #include "Components/Component.h"
-#include <bits/stdc++.h>
-
+//#include <bits/stdc++.h>
+#include <map>
+using namespace std;
 class Entity {
 private:
     std::map <int, Component*> component_list;

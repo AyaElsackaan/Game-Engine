@@ -22,8 +22,6 @@ public:
     virtual void onUpdate()=0;  //frames
     virtual void onDeleteApp()=0;
     virtual void onDeleteState()=0;
-
-
 };
 
 

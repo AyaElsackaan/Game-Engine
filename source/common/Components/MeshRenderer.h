@@ -14,7 +14,7 @@ private:
     Mesh *model;
 
 public:
-    MeshRenderer( Entity *e, int ord, ShaderProgram * S,Mesh *m);
+    MeshRenderer( int ord, ShaderProgram * S,Mesh *m);
     void setShader(ShaderProgram * S);
     void setMesh(Mesh* m);
     ShaderProgram* getShader() const;

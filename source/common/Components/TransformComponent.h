@@ -17,7 +17,7 @@ private:
 
 
 public:
-    TransformComponent( Entity *e, int ord, glm::vec3 pos, glm::vec3 rot,
+    TransformComponent(int ord, glm::vec3 pos, glm::vec3 rot,
                        glm::vec3 sc);
     glm:: mat4 to_mat4() const;
     void setScale(glm::vec3 sc);

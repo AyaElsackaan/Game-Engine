@@ -48,5 +48,5 @@ include_directories(
 # we add an executable target
 # the target compiles the source file and the common & vendor source files
 # Then we link GLFW with it
-add_executable(DRAWSHAPES source/drawshapes.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
-target_link_libraries(DRAWSHAPES glfw)
+#add_executable(DRAWSHAPES source/drawshapes.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
+#target_link_libraries(DRAWSHAPES glfw)

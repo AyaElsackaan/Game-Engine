@@ -12,9 +12,11 @@ using namespace std;
 class Entity {
 private:
     std::map <int, Component*> component_list;
-    //int ID;
+    int ID;
 public:
     std::map <int, Component*> getComponents() const;
+    void setID(int id);
+    int getID() const;
     void addComponent(Component* new_comp);
     void removeComponent(/*to be added*/);
 };

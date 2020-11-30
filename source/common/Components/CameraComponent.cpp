@@ -17,7 +17,7 @@
  //   this-> vertical_field_of_view_angle=vertical_field_of_view_angle;
  //   this-> orthographic_height=orthographic_height;
 //}
-CameraComponent::CameraComponent(Entity *e, int ord)  : Component(e, ord){
+CameraComponent::CameraComponent(int ord)  : Component(ord){
             dirtyFlags = V_DIRTY | P_DIRTY | VP_DIRTY;
             up = {0, 1, 0};
         }
@@ -189,9 +189,9 @@ void CameraComponent::onStartApp() {
 
 void CameraComponent::onStartState() 
 {
-        setEyePosition(eye);
-        setTarget({0, 0, 0});
-        setUp(up);
+       // setEyePosition(eye);
+       // setTarget({0, 0, 0});
+       // setUp(up);
       //  setupPerspective(glm::pi<float>()/2, static_cast<float>(width)/height, 0.1f, 100.0f);
 }
 

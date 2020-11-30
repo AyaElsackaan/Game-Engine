@@ -30,8 +30,9 @@ void TransformComponent::onDeleteState() {
 
 }
 
-TransformComponent::TransformComponent( Entity *e, int ord, glm::vec3 pos, glm::vec3 rot,
-                                       glm::vec3 sc) : Component(e, ord) {
+TransformComponent::TransformComponent(int ord, glm::vec3 pos, glm::vec3 rot,
+                                       glm::vec3 sc) : Component(ord) 
+{
     this->position=pos;
     this->rotation=rot;
     this->scale=sc;

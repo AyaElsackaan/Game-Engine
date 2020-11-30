@@ -1,7 +1,18 @@
 #include "MeshRenderer.h"
 #include "Components/TransformComponent.h"
 #include "Components/CameraComponent.h"
-MeshRenderer::MeshRenderer( Entity *e, int ord, ShaderProgram * S,Mesh *m) : Component(e, ord) {
+
+ /* 
+
+
+
+        wazefto eno be attach el mesh bl shader bta3 kol entity
+
+
+
+
+*/
+MeshRenderer::MeshRenderer(  int ord, ShaderProgram * S,Mesh *m) : Component(ord) {
     this->Sprogram = S;
     this->model = m;
 
@@ -15,11 +26,11 @@ void MeshRenderer::setMesh(Mesh* m)
 {
     this->model = m;
 }
-ShaderProgram* MeshRenderer::getShader()
+ShaderProgram* MeshRenderer::getShader() const
 {
     return this->Sprogram;
 }
-Mesh* MeshRenderer::getMesh()
+Mesh* MeshRenderer::getMesh() const
 {
     return model;
 }
@@ -38,11 +49,11 @@ void MeshRenderer::onStartState()
 }  
 void MeshRenderer::onUpdate() 
 {
-    map<int,Component*> m = this->getCurrentEntity()->getComponents();
-    TransformComponent* tranf = dynamic_cast<TransformComponent*>(m[0]);
-    CameraComponent* cam = dynamic_cast<CameraComponent*>(m[2]);
-    this->Sprogram->set("tranform", cam->getVPMatrix() * tranf->to_mat4());
-    this->model->draw();
+    //map<int,Component*> m = this->getCurrentEntity()->getComponents();
+    //TransformComponent* tranf = dynamic_cast<TransformComponent*>(m[0]);
+    //CameraComponent* cam = dynamic_cast<CameraComponent*>(m[2]);
+    //this->Sprogram->set("tranform", cam->getVPMatrix() * tranf->to_mat4());
+    //this->model->draw();
 }
 
 

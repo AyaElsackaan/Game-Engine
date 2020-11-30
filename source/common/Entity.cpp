@@ -15,4 +15,11 @@ void Entity::addComponent(Component* new_comp) {
 void Entity::removeComponent() {
 
 }
-
+void Entity::setID(int id)
+{
+    this->ID = id;
+}
+int Entity::getID() const
+{
+    return this->ID;
+}

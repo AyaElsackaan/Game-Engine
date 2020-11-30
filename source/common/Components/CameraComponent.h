@@ -37,7 +37,7 @@
 
     public:
 
-        CameraComponent(Entity *e, int ord);
+        CameraComponent( int ord);
         // Setup the camera as a perspective camera
         void setupPerspective(float field_of_view_y, float aspect_ratio, float near, float far);
 
@@ -57,7 +57,7 @@
         glm::mat4 getProjectionMatrix();
         glm::mat4 getViewMatrix();
         glm::mat4 getVPMatrix();
-        CameraType getType(){return type;}
+        CameraType getType();
         [[nodiscard]] float getVerticalFieldOfView() const;
         [[nodiscard]] float getHorizontalFieldOfView() const ;
         [[nodiscard]] float getOrthographicHeight() const;

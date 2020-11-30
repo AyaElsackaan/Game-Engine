@@ -27,7 +27,7 @@ class CameraController : public Component {
         bool mouse_locked = false;
 
      public:
-        CameraController(Entity *e, int ord);
+        CameraController( int ord);
         void initialize(GAME::Application* application, CameraComponent* camera);
         void release();
 

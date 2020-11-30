@@ -7,14 +7,15 @@
 
 #include "Components/Component.h"
 //#include <bits/stdc++.h>
-#include <map>
+#include <vector>
 using namespace std;
+
 class Entity {
 private:
-    std::map <int, Component*> component_list;
+    std::vector<Component*> component_list;
     int ID;
 public:
-    std::map <int, Component*> getComponents() const;
+    std:: vector<Component*> getComponents() const;
     void setID(int id);
     int getID() const;
     void addComponent(Component* new_comp);

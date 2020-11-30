@@ -4,12 +4,13 @@
 
 #include "Entity.h"
 
-std::map<int, Component*> Entity::getComponents() const{
+std::vector<Component*> Entity::getComponents() const{
     return this->component_list;
 }
 
-void Entity::addComponent(Component* new_comp) {
-    component_list[new_comp->getOrder()]=new_comp;
+void Entity::addComponent(Component* new_comp)
+ {
+     this->component_list.push_back(new_comp);
 }
 
 void Entity::removeComponent() {

@@ -12,12 +12,14 @@ void TransformComponent::onStartApp() {
 
 }
 
-void TransformComponent::onStartState() {
+void TransformComponent::onStartState() 
+{
 
 }
 
-void TransformComponent::onUpdate() {
-
+void TransformComponent::onUpdate() 
+{
+    this->to_mat4();
 }
 
 void TransformComponent::onDeleteApp() {
@@ -41,4 +43,28 @@ glm::mat4 TransformComponent::to_mat4() const {
            glm::yawPitchRoll(rotation.y, rotation.x, rotation.z) *
            glm::scale(glm::mat4(1.0f), scale);
 
+}
+void TransformComponent::setScale(glm::vec3 sc)
+{
+    this->scale = sc;
+}
+void TransformComponent::setPosition(glm::vec3 pos)
+{
+    this->position = pos;
+}
+void TransformComponent::setRotation(glm::vec3 rot)
+{
+    this->rotation = rot;
+}
+glm::vec3 TransformComponent::getRotation() const
+{
+    return this->rotation;
+}
+glm::vec3 TransformComponent::getPosition() const
+{
+    return this->position;
+}
+glm::vec3 TransformComponent::getScale() const
+{
+    return this->scale;
 }

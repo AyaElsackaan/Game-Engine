@@ -17,8 +17,8 @@ public:
     MeshRenderer( Entity *e, int ord, ShaderProgram * S,Mesh *m);
     void setShader(ShaderProgram * S);
     void setMesh(Mesh* m);
-    ShaderProgram* getShader();
-    Mesh* getMesh();
+    ShaderProgram* getShader() const;
+    Mesh* getMesh() const;
     void onStartApp() override ; //virtual/pure virtual>> to be modified
     void onStartState() override;
     void onUpdate() override;

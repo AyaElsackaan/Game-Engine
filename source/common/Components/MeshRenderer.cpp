@@ -31,15 +31,13 @@ void MeshRenderer::onStartApp()
 
 void MeshRenderer::onStartState() 
 {
-    this->Sprogram->create();
-    this->Sprogram->attach("assets/shaders/ex11_transformation/transform.vert", GL_VERTEX_SHADER);
-    this->Sprogram->attach("assets/shaders/ex11_transformation/tint.frag", GL_FRAGMENT_SHADER);
-    this->Sprogram->link();
+    //this->Sprogram->create();
+   // this->Sprogram->attach(""assets/shaders/ex11_transformation/transform.vert, GL_VERTEX_SHADER);
+   // this->Sprogram->attach("assets/shaders/ex11_transformation/tint.frag", GL_FRAGMENT_SHADER);
+   // this->Sprogram->link();
 }  
 void MeshRenderer::onUpdate() 
 {
-
-// Transform 0 , MeshRenderer 1 , Camera 2
     map<int,Component*> m = this->getCurrentEntity()->getComponents();
     TransformComponent* tranf = dynamic_cast<TransformComponent*>(m[0]);
     CameraComponent* cam = dynamic_cast<CameraComponent*>(m[2]);

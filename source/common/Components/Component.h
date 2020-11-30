@@ -10,11 +10,14 @@
 
 class Component {
 private:
-    Entity * current_entity;
+    Entity* current_entity;
+    Entity* parent;
     int order;
 public:
     Component(Entity* e, int ord);
     Entity* getCurrentEntity() const;
+    void setparent(Entity* e);
+    Entity* getparent() const;
     int getOrder() const;
 
     virtual void onStartApp() = 0; //virtual/pure virtual>> to be modified

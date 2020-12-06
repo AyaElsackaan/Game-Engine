@@ -4,9 +4,9 @@
 
 #ifndef GFX_LAB_CAMERACOMPONENT_H
 #define GFX_LAB_CAMERACOMPONENT_H
-
+#include "Component.h"
 #include <glm/gtx/euler_angles.hpp>
-#include "Components/Component.h"
+
 
 
     enum struct CameraType {
@@ -15,7 +15,7 @@
     };
     // A class that represents a camera
     // Used to generate a view and a projection matrix
-    class CameraComponent :public Component{
+    class CameraComponent : public Component{
     private:
         // Dirty Flags are programming pattern where we only regenerate some output if:
         // 1- The inputs were changed.

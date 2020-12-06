@@ -17,7 +17,9 @@ private:
 
 public:
     void GoToState(State * NextState);
-
+    void OnDraw() override;
+    void OnExit() override;
+    void OnInitialize() override;
 };
 
 

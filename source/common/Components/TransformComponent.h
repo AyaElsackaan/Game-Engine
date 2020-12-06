@@ -8,11 +8,12 @@
 #include <glm/glm.hpp>
 
 #include "Component.h"
-class TransformComponent: public Component {
+class TransformComponent : public Component {
 private:
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
+    TransformComponent* parent;
 
 
 
@@ -32,6 +33,8 @@ public:
      void onUpdate() override;
      void onDeleteApp() override;
      void onDeleteState() override;
+     TransformComponent* getParent()const;
+     void setParent(TransformComponent* P);
 
 };
 

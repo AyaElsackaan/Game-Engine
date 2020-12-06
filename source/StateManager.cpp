@@ -1,6 +1,22 @@
 
 
 #include "StateManager.h"
+void StateManager::OnDraw ()
+{
+    if(CurrentState != NULL)
+         CurrentState->OnDraw();
+
+}
+void StateManager::OnInitialize ()
+{
+    if(CurrentState != NULL)
+        CurrentState->OnEnter();
+}
+void StateManager::OnExit ()
+{
+    if(CurrentState != NULL)
+        CurrentState->OnExit();
+}
 
 void StateManager::GoToState (State * NextState){
     while(!exit) {

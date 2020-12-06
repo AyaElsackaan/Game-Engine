@@ -36,10 +36,17 @@ TransformComponent::TransformComponent(int ord, glm::vec3 pos, glm::vec3 rot,
     this->position=pos;
     this->rotation=rot;
     this->scale=sc;
+    parent=NULl;
 
 }
 
 glm::mat4 TransformComponent::to_mat4() const {
+    if(parent)
+    {
+        return glm::translate(parent->to_mat4(), position) *
+               glm::yawPitchRoll(rotation.y, rotation.x, rotation.z) *
+               glm::scale(parent->to_mat4(), scale);
+    }
     return glm::translate(glm::mat4(1.0f), position) *
            glm::yawPitchRoll(rotation.y, rotation.x, rotation.z) *
            glm::scale(glm::mat4(1.0f), scale);
@@ -68,4 +75,12 @@ glm::vec3 TransformComponent::getPosition() const
 glm::vec3 TransformComponent::getScale() const
 {
     return this->scale;
+}
+TransformComponent* TransformComponent::getParent()const
+{
+    return this->parent;
+}
+void TransformComponent::setParent(TransformComponent* P)
+{
+    parent=P;
 }

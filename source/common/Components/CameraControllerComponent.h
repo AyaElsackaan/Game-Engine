@@ -8,8 +8,9 @@
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <application.hpp>
-#include "Components/Component.h"
+#include "Component.h"
 #include "CameraComponent.h"
+
 
 
 class CameraController : public Component {

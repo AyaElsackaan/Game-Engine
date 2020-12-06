@@ -8,6 +8,7 @@
 
 #include "input/keyboard.hpp"
 #include "input/mouse.hpp"
+#include "../States/State.h"
 
 namespace GAME {
 
@@ -21,6 +22,10 @@ namespace GAME {
     // This class act as base class for all the Applications covered in the examples.
     // It offers the functionalities needed by all the examples.
     class Application {
+      //  State * CurrentState = NULL;
+       // State * NextState = NULL;
+       // bool exit = false;
+
     protected:
         GLFWwindow * window = nullptr;      // Pointer to the window created by GLFW using "glfwCreateWindow()".
         Keyboard keyboard;                  // Instance of "our" keyboard class that handles keyboard functionalities.

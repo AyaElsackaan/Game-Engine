@@ -12,7 +12,7 @@
 //    this->up=up;
 //    this-> is_perspective=is_perspective;
 //    this-> near=near;
-///    this-> far=far;
+//    this-> far=far;
  //   this-> aspect_ratio=aspect_ratio;
  //   this-> vertical_field_of_view_angle=vertical_field_of_view_angle;
  //   this-> orthographic_height=orthographic_height;

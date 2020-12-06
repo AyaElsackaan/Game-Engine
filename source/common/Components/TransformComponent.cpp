@@ -36,7 +36,7 @@ TransformComponent::TransformComponent(int ord, glm::vec3 pos, glm::vec3 rot,
     this->position=pos;
     this->rotation=rot;
     this->scale=sc;
-    parent=NULl;
+    parent=NULL;
 
 }
 

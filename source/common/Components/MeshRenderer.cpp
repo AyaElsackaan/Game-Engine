@@ -1,6 +1,4 @@
 #include "MeshRenderer.h"
-#include "Components/TransformComponent.h"
-#include "Components/CameraComponent.h"
 
  /* 
 

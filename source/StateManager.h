@@ -6,20 +6,20 @@
 #include <shader.hpp>
 #include <iostream>
 #include "./States/State.h"
-using namespace std;
-
 
 class StateManager : public GAME::Application {
 private:
-    State * CurrentState = NULL;
+    State* CurrentState = NULL;
     State * NextState = NULL;
     bool exit = false;
 
 public:
+
+    StateManager();
     void GoToState(State * NextState);
-    void OnDraw() override;
-    void OnExit() override;
-    void OnInitialize() override;
+    void onDraw(double deltaTime) override;
+    void onDestroy() override;
+    void onInitialize() override;
 };
 
 

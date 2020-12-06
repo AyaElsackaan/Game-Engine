@@ -27,13 +27,16 @@ class CameraController : public Component {
 
         bool mouse_locked = false;
 
+        double delta_time;
+
      public:
         CameraController( int ord);
         void initialize(GAME::Application* application, CameraComponent* camera);
+
+        void setDeltaTime(double del);
         void release();
 
         void update(double delta_time);
-
         [[nodiscard]] float getYaw() const;
         [[nodiscard]] float getPitch() const;
         [[nodiscard]] glm::vec3 getPosition() const;

@@ -73,9 +73,10 @@ bool GAME::ShaderProgram::attach(const std::string &filename, GLenum type) const
 bool GAME::ShaderProgram::link() const {
     //Link
     glLinkProgram(program);
-
+    
     //Check and log for any error in the linking process
     GLint status;
+
     glGetProgramiv(program, GL_LINK_STATUS, &status);
     if (!status) {
         GLint length;

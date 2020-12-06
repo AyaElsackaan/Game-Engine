@@ -1,21 +1,43 @@
 
 
 #include "StateManager.h"
-void StateManager::OnDraw ()
+#include "./States/PlayState.h"
+
+    StateManager::StateManager()
+    {
+        PlayState* ps = new PlayState();
+
+        CurrentState = ps;
+    }
+
+void StateManager::onDraw (double deltaTime)
 {
-    if(CurrentState != NULL)
-         CurrentState->OnDraw();
+    std::cout <<"StateManager Draw" <<endl;
+    PlayState* ps;
+    ps = dynamic_cast<PlayState*>( CurrentState);
+    ps->OnDraw(deltaTime);
 
 }
-void StateManager::OnInitialize ()
+void StateManager:: onInitialize ()
 {
-    if(CurrentState != NULL)
-        CurrentState->OnEnter();
+        std::cout <<"StateManager INIT" <<endl;
+        int w,h;
+        glfwGetFramebufferSize(window, &w, &h);
+        std::cout << "Width :" << w <<endl;
+        std::cout << "Height :" << h <<endl;
+
+        PlayState* ps;
+        ps = dynamic_cast<PlayState*>( CurrentState);
+        ps->setHeight(h);
+        ps->setWidth(w);
+        ps->setApplication(this);
+        ps->OnEnter();
 }
-void StateManager::OnExit ()
+void StateManager:: onDestroy ()
 {
-    if(CurrentState != NULL)
-        CurrentState->OnExit();
+        PlayState* ps;
+        ps = dynamic_cast<PlayState*>( CurrentState);
+        ps->OnExit();
 }
 
 void StateManager::GoToState (State * NextState){
@@ -29,14 +51,16 @@ void StateManager::GoToState (State * NextState){
             NextState = NULL;
             CurrentState->OnEnter();
         }
-        if(CurrentState != NULL)
-            CurrentState->OnDraw();
+       // if(CurrentState != NULL)
+           // CurrentState->OnDraw();
     }
 
     if(CurrentState != NULL)
         CurrentState->OnExit();
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+ {
+
     return StateManager().run();
 }

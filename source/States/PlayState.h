@@ -2,19 +2,36 @@
 
 #ifndef GFX_LAB_PLAYSTATE_H
 #define GFX_LAB_PLAYSTATE_H
-#include "State.h"
 #include "../common/Entity.h"
+#include "State.h"
+#include <application.hpp>
+#include <shader.hpp>
+#include <mesh/mesh.hpp>
 
-class PlayState : public State{
+
+class PlayState : public State {
+
     vector <Entity*> World;
-        ShaderProgram program;
-        Mesh model;
 
-        public:
+    GAME::ShaderProgram program;
+    
+    GAME::Mesh model;
+
+    GAME::Application* application;
+    int Height;
+    int Width;
+
+    public:
+
     PlayState();
-    void OnEnter() override;
-    void OnDraw() override;
-    void OnExit() override;
+    void setApplication(GAME::Application* app);
+     void setHeight(int h);
+    void setWidth(int w);
+  //  int getHeight();
+  //  int getWidth();
+    void OnEnter() ;
+    void OnDraw(double deltaTime);
+    void OnExit();
 };
 
 

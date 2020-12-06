@@ -1,7 +1,12 @@
 #include "CameraControllerComponent.h"
-
+#include <iostream>
 
 CameraController::CameraController( int ord)  : Component( ord){}
+
+void CameraController:: setDeltaTime(double del)
+{
+    delta_time = del;
+}
 
 void CameraController::initialize(GAME::Application* application, CameraComponent* camera)
 {
@@ -26,6 +31,8 @@ void CameraController::release(){
 }
 
 void CameraController::update(double delta_time){
+
+    std::cout << " Delta : " << delta_time << std::endl;
     if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked){
         app->getMouse().lockMouse(app->getWindow());
         mouse_locked = true;
@@ -99,10 +106,14 @@ void CameraController::onStartApp()
 void CameraController::onStartState()
 {
 }
+void CameraController::onDeleteState()
+{
+}
+
 
 void CameraController::onUpdate()
 {
-
+    this->update(delta_time);
 }
 void CameraController::onDeleteApp() {
 

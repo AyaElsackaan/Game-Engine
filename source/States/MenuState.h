@@ -8,7 +8,7 @@ class MenuState : public State {
 public:
     MenuState();
     virtual void OnEnter();
-    virtual void OnDraw();
+    virtual void OnDraw(double deltaTime);
     virtual void OnExit();
 };
 

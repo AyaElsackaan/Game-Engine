@@ -17,6 +17,7 @@ public:
 
     StateManager();
     void GoToState(State * NextState);
+    GAME::WindowConfiguration getWindowConfiguration() override;
     void onDraw(double deltaTime) override;
     void onDestroy() override;
     void onInitialize() override;

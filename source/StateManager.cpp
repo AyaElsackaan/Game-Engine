@@ -2,7 +2,9 @@
 
 #include "StateManager.h"
 #include "./States/PlayState.h"
-
+   GAME::WindowConfiguration StateManager::getWindowConfiguration(){
+        return { "our GAME", {1280, 720}, false };
+    }
     StateManager::StateManager()
     {
         PlayState* ps = new PlayState();
@@ -12,7 +14,6 @@
 
 void StateManager::onDraw (double deltaTime)
 {
-    std::cout <<"StateManager Draw" <<endl;
     PlayState* ps;
     ps = dynamic_cast<PlayState*>( CurrentState);
     ps->OnDraw(deltaTime);
@@ -20,11 +21,8 @@ void StateManager::onDraw (double deltaTime)
 }
 void StateManager:: onInitialize ()
 {
-        std::cout <<"StateManager INIT" <<endl;
         int w,h;
         glfwGetFramebufferSize(window, &w, &h);
-        std::cout << "Width :" << w <<endl;
-        std::cout << "Height :" << h <<endl;
 
         PlayState* ps;
         ps = dynamic_cast<PlayState*>( CurrentState);
@@ -51,8 +49,6 @@ void StateManager::GoToState (State * NextState){
             NextState = NULL;
             CurrentState->OnEnter();
         }
-       // if(CurrentState != NULL)
-           // CurrentState->OnDraw();
     }
 
     if(CurrentState != NULL)

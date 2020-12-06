@@ -18,7 +18,7 @@ namespace GAME::mesh_utils {
 
     void Sphere(Mesh& mesh,
                 const glm::ivec2& segments = {32, 16},
-                bool colored = false,
+                bool colored = true,
                 const glm::vec3& center = {0,0,0},
                 float radius = 0.5f,
                 const glm::vec2& texture_offset = {0, 0},

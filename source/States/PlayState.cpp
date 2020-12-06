@@ -38,7 +38,7 @@ void PlayState::OnEnter()
     program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/tint.frag", GL_FRAGMENT_SHADER);
     program.link();
 
-
+ ///// Entity 1
     GAME::mesh_utils::Cuboid(model, true);
 
 
@@ -53,6 +53,21 @@ void PlayState::OnEnter()
     Entity* E1=new Entity();
     E1->addComponent(mesh);
     E1->addComponent(transform);
+ ///// Entity 2
+ 
+     GAME::mesh_utils::Sphere(model1);
+
+    Component* mesh1 =new MeshRenderer(0,&program,&model1);
+
+    glm::vec3 pos1={5,10,15};
+    glm::vec3 rot1={0,9,0};
+    glm::vec3 sc1={10,10,10};
+
+    Component* transform1 =new TransformComponent(1,pos1, rot1, sc1);
+    Entity* E2=new Entity();
+    E2->addComponent(mesh1);
+    E2->addComponent(transform1);
+
 
     ///////////////////////
 
@@ -84,6 +99,7 @@ void PlayState::OnEnter()
 
         World.push_back(camera);    // world[0]
         World.push_back(E1);        // world[1]
+        World.push_back(E2);        // world[1]
 
         glClearColor(0, 1, 0, 0);
 
@@ -99,14 +115,14 @@ void PlayState::OnEnter()
 void PlayState::OnDraw(double deltaTime)
 {
 
-    //// set delta time
-    //CameraController* cam_delta;
-    // vector<Component*> controller_setTime;
-    //controller_setTime = World[0]->getComponents();
-   // cam_delta = dynamic_cast<CameraController*>( controller_setTime[2]);
+    ///set delta time
+    CameraController* cam_delta;
+    vector<Component*> controller_setTime;
+    controller_setTime = World[0]->getComponents();
+    cam_delta = dynamic_cast<CameraController*>( controller_setTime[2]);
 
-   // cam_delta->setDeltaTime(deltaTime);
-   // cam_delta->onUpdate();
+    cam_delta->setDeltaTime(deltaTime);
+    cam_delta->onUpdate();
 
     ///// on update for each entity
     TransformComponent* tc;
@@ -114,6 +130,12 @@ void PlayState::OnDraw(double deltaTime)
     comp = World[1]->getComponents();
     tc = dynamic_cast<TransformComponent*>( comp[1]);
     tc->onUpdate();
+
+    TransformComponent* tc2;
+    vector<Component*> comp2;
+    comp2 = World[2]->getComponents();
+    tc2 = dynamic_cast<TransformComponent*>( comp2[1]);
+    tc2->onUpdate();
     ///for (int i =0;i<World.size();i++)
     //{
     //    comp = World[i]->getComponents();

@@ -17,6 +17,11 @@ public:
 
     StateManager();
     void GoToState(State * NextState);
+    void setNext(State * ns);
+    //void setCurrent(State * ps);
+    State* getCurrent();
+    State* getNext();
+
     GAME::WindowConfiguration getWindowConfiguration() override;
     void onDraw(double deltaTime) override;
     void onDestroy() override;

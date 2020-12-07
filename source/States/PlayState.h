@@ -16,8 +16,8 @@ class PlayState : public State {
     GAME::ShaderProgram program;
     
     GAME::Mesh model;
-    
     GAME::Mesh model1;
+
 
     GAME::Application* application;
     int Height;

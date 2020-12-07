@@ -5,7 +5,8 @@
 #include <sstream>
 #include <iomanip>
 #include <ctime>
-
+#include "../States/PlayState.h"
+#include "../States/MenuState.h"
 // Include the Dear ImGui implementation headers
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD2
 #include <imgui_impl/imgui_impl_glfw.h>
@@ -117,6 +118,13 @@ void GAME::Application::configureOpenGL() {
     glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 }
 
+
+void GAME::Application::onInitialize()
+{
+            PlayState* ps = new PlayState();
+            this->CurrentState = ps;
+            this->NextState = NULL;
+}        
 GAME::WindowConfiguration GAME::Application::getWindowConfiguration() {
     return {"OpenGL Application", {1280, 720}, false };
 }
@@ -185,11 +193,23 @@ int GAME::Application::run() {
 
     // Call onInitialize if the application needs to do some custom initialization (such as file loading, object creation, etc).
     onInitialize();
+    int w,h;
+    glfwGetFramebufferSize(window, &w, &h);
+    PlayState* ps;
+    MenuState* ms;
+
+    ps = dynamic_cast<PlayState*>( CurrentState);
+    ps->setHeight(h);
+    ps->setWidth(w);
+    ps->setApplication(this);
+    ps->OnEnter();
+
 
     // The time at which the last frame started. But there was no frames yet, so we'll just pick the current time.
     double last_frame_time = glfwGetTime();
 
     while(!glfwWindowShouldClose(window)){
+
         glfwPollEvents(); // Read all the user events and call relevant callbacks.
 
         // Start a new ImGui frame
@@ -215,8 +235,58 @@ int GAME::Application::run() {
         // Get the current time (the time at which we are starting the current frame).
         double current_frame_time = glfwGetTime();
 
+        
+        /// Check State
+        if(NextState != NULL)
+        {
+            if(CurrentState != NULL)
+            {
+                if(ps!=NULL)
+                {
+                    std::cout << "Exit" << std::endl;
+                    ps->OnExit();
+                }
+                else
+                {
+                    ms->OnExit();
+                }   
+            }
+
+            CurrentState = NextState;
+            NextState = NULL;
+            if(ps!=NULL)
+            {
+                int w,h;
+               glfwGetFramebufferSize(window, &w, &h);
+               ps->setHeight(h);
+               ps->setWidth(w);
+               ps->setApplication(this);
+               ps->OnEnter();
+            }
+            else
+            {
+                ms->OnEnter();
+            } 
+        }
+        
+
+
+
+        
         // Call onDraw, in which we will draw the current frame, and send to it the time difference between the last and current frame
-        onDraw(current_frame_time - last_frame_time);
+       
+       if(ps!=NULL)
+        {
+            ps->OnDraw(current_frame_time - last_frame_time);
+        }
+        else
+        {
+            ms->OnDraw(current_frame_time - last_frame_time);
+        }
+             
+       
+       
+      //  onDraw(current_frame_time - last_frame_time);
         last_frame_time = current_frame_time; // Then update the last frame start time (this frame is now the last frame)
 
 #if defined(ENABLE_OPENGL_DEBUG_MESSAGES)
@@ -240,8 +310,23 @@ int GAME::Application::run() {
     }
 
     // Call for cleaning up
-    onDestroy();
+    
 
+        if(CurrentState != NULL)
+        {
+            if(ps!=NULL)
+            {
+
+                ps->OnExit();
+            }
+            else
+            {
+                ms->OnExit();
+            }   
+
+        }
+  
+       
     // Shutdown ImGui & destroy the context
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -312,3 +397,9 @@ void GAME::Application::setupCallbacks() {
     });
 }
 
+int main(int argc, char** argv)
+{
+
+    return GAME::Application().run();
+    //return StateManager().run();
+}

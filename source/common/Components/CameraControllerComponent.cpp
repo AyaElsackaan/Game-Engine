@@ -32,7 +32,6 @@ void CameraController::release(){
 
 void CameraController::update(double delta_time){
 
-    std::cout << " Delta : " << delta_time << std::endl;
     if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked){
         app->getMouse().lockMouse(app->getWindow());
         mouse_locked = true;

@@ -1,10 +1,5 @@
 
-//#include <glm/glm.hpp>
-////#include <glad/gl.h>
 #include <application.hpp>
-
-//#include <glm/trigonometric.hpp>
-//#include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <imgui-utils/utils.hpp>
 #include <mesh/mesh-utils.hpp>
@@ -59,9 +54,9 @@ void PlayState::OnEnter()
 
     Component* mesh1 =new MeshRenderer(0,&program,&model1);
 
-    glm::vec3 pos1={5,10,15};
+    glm::vec3 pos1={5,10,5};
     glm::vec3 rot1={0,9,0};
-    glm::vec3 sc1={10,10,10};
+    glm::vec3 sc1={5,5,5};
 
     Component* transform1 =new TransformComponent(1,pos1, rot1, sc1);
     Entity* E2=new Entity();

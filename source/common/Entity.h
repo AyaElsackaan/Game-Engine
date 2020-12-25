@@ -12,6 +12,7 @@ using namespace std;
 
 class Entity {
 private:
+    // leha pointer 3ala awl el array bta3 el world
     std::vector<Component*> component_list;
     int ID;
 public:

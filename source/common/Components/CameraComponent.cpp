@@ -114,7 +114,8 @@ void CameraComponent::setupOrthographic(float orthographic_height, float aspect_
             return P;
         }
 
-        glm::mat4 CameraComponent::getViewMatrix(){
+        glm::mat4 CameraComponent::getViewMatrix()
+        {
             if(dirtyFlags & V_DIRTY){ // Only regenerate the view matrix if its flag is dirty
                 V = glm::lookAt(eye, eye + direction, up);
                 dirtyFlags &= ~V_DIRTY; // V is no longer dirty

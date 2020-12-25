@@ -45,6 +45,9 @@ void PlayState::OnEnter()
     glm::vec3 sc={10,10,10};
     Component* transform=new TransformComponent(1,pos, rot, sc);
 
+     TransformComponent* TempTrans;
+    TempTrans = dynamic_cast<TransformComponent*>(transform);
+
     Entity* E1=new Entity();
     E1->addComponent(mesh);
     E1->addComponent(transform);
@@ -56,13 +59,21 @@ void PlayState::OnEnter()
 
     glm::vec3 pos1={5,10,5};
     glm::vec3 rot1={0,9,0};
-    glm::vec3 sc1={5,5,5};
+    glm::vec3 sc1={1,1,1};
 
     Component* transform1 =new TransformComponent(1,pos1, rot1, sc1);
+
+    // sphere 
+    TransformComponent* TempTransform;
+    TempTransform = dynamic_cast<TransformComponent*>(transform1);
+    TempTransform->setParent(TempTrans);
+
+
     Entity* E2=new Entity();
     E2->addComponent(mesh1);
     E2->addComponent(transform1);
 
+    
 
     ///////////////////////
 
@@ -131,23 +142,13 @@ void PlayState::OnDraw(double deltaTime)
     comp2 = World[2]->getComponents();
     tc2 = dynamic_cast<TransformComponent*>( comp2[1]);
     tc2->onUpdate();
-    ///for (int i =0;i<World.size();i++)
-    //{
-    //    comp = World[i]->getComponents();
-    //    for (int j=0;j< comp.size() ;j++)
-    //        comp[j]->onUpdate();
-    //}
-
 
     RendererSystem* renderEntities = new RendererSystem();
-    vector<Entity*> Entities;
-    for (int i =1;i<World.size();i++)
-    {
-        Entities.push_back(World[i]);
-    }
-       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    renderEntities->RenderAll(Entities,World[0]);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    renderEntities->RenderAll(World,World[0]);
 
         glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -155,6 +156,11 @@ void PlayState::OnDraw(double deltaTime)
 }
 void PlayState::OnExit()
 {
+   //  this->Sprogram->destroy();
+  //  this->model->destroy();
+    program.destroy();
+    model.destroy();
+    model1.destroy();
     vector<Component*> comp;
     for (int i =0;i<World.size();i++)
     {

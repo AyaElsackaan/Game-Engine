@@ -10,7 +10,7 @@
 #include <application.hpp>
 #include "Component.h"
 #include "CameraComponent.h"
-
+#include "TransformComponent.h"
 
 
 class CameraController : public Component {
@@ -31,7 +31,7 @@ class CameraController : public Component {
 
      public:
         CameraController( int ord);
-        void initialize(GAME::Application* application, CameraComponent* camera);
+        void initialize(GAME::Application* application ,CameraComponent* cam);
 
         void setDeltaTime(double del);
         void release();

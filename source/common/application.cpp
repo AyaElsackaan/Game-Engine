@@ -241,15 +241,8 @@ int GAME::Application::run() {
         {
             if(CurrentState != NULL)
             {
-                if(ps!=NULL)
-                {
-                    std::cout << "Exit" << std::endl;
-                    ps->OnExit();
-                }
-                else
-                {
-                    ms->OnExit();
-                }   
+                CurrentState->OnExit();
+ 
             }
 
             CurrentState = NextState;
@@ -274,15 +267,10 @@ int GAME::Application::run() {
 
         
         // Call onDraw, in which we will draw the current frame, and send to it the time difference between the last and current frame
-       
-       if(ps!=NULL)
-        {
-            ps->OnDraw(current_frame_time - last_frame_time);
-        }
-        else
-        {
-            ms->OnDraw(current_frame_time - last_frame_time);
-        }
+       // msh mehtaga momken anade bl base 3ala tol
+
+            CurrentState->OnDraw(current_frame_time - last_frame_time);
+
              
        
        
@@ -314,15 +302,8 @@ int GAME::Application::run() {
 
         if(CurrentState != NULL)
         {
-            if(ps!=NULL)
-            {
 
-                ps->OnExit();
-            }
-            else
-            {
-                ms->OnExit();
-            }   
+            CurrentState->OnExit(); 
 
         }
   

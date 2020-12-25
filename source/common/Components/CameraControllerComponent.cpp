@@ -8,20 +8,19 @@ void CameraController:: setDeltaTime(double del)
     delta_time = del;
 }
 
-void CameraController::initialize(GAME::Application* application, CameraComponent* camera)
-{
-    this->app = application;
-    this->camera = camera;
-    yaw_sensitivity = pitch_sensitivity = 0.01f;
-    position_sensitivity = {3.0f, 3.0f, 3.0f};
-    fov_sensitivity = glm::pi<float>()/10;
+void CameraController::initialize(GAME::Application* application, CameraComponent* camera){
+            this->app = application;
+            this->camera = camera;
+            yaw_sensitivity = pitch_sensitivity = 0.01f;
+            position_sensitivity = {3.0f, 3.0f, 3.0f};
+            fov_sensitivity = glm::pi<float>()/10;
 
-    position = camera->getEyePosition();
-    auto direction = camera->getDirection();
-    yaw = glm::atan(-direction.z, direction.x);
-    float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
-    pitch = glm::atan(direction.y, base_length);
-}
+            position = camera->getEyePosition();
+            auto direction = camera->getDirection();
+            yaw = glm::atan(-direction.z, direction.x);
+            float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
+            pitch = glm::atan(direction.y, base_length);
+        }
 
 void CameraController::release(){
     if(mouse_locked) {
@@ -30,7 +29,8 @@ void CameraController::release(){
     }
 }
 
-void CameraController::update(double delta_time){
+void CameraController::update(double delta_time)
+{
 
     if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked){
         app->getMouse().lockMouse(app->getWindow());
@@ -54,7 +54,7 @@ void CameraController::update(double delta_time){
     fov = glm::clamp(fov, glm::pi<float>() * 0.01f, glm::pi<float>() * 0.99f);
     camera->setVerticalFieldOfView(fov);
 
-    glm::vec3 front = camera->Forward(), up = camera->Up(), right = camera->Right();
+    glm::vec3 front = camera->Forward(), up = camera->Up() , right = camera->Right();
 
     glm::vec3 current_sensitivity = this->position_sensitivity;
     if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) current_sensitivity *= speedup_factor;

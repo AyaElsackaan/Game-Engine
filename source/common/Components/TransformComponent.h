@@ -13,7 +13,7 @@ private:
     glm::vec3 position;
     glm::vec3 rotation;
     glm::vec3 scale;
-    TransformComponent* parent;
+    TransformComponent* parent = NULL;
 
 
 
@@ -27,13 +27,16 @@ public:
     glm::vec3 getRotation() const;
     glm::vec3 getPosition() const;
     glm::vec3 getScale() const;
+    glm::vec3 getForward() const;
 
      void onStartApp() override ; //virtual/pure virtual>> to be modified
      void onStartState() override;
      void onUpdate() override;
      void onDeleteApp() override;
      void onDeleteState() override;
+
      TransformComponent* getParent()const;
+     //parentxTransform
      void setParent(TransformComponent* P);
 
 };

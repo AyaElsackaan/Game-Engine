@@ -57,8 +57,8 @@ void MeshRenderer::onUpdate()
 
 void MeshRenderer::onDeleteState()
 {
-    this->Sprogram->destroy();
-    this->model->destroy();
+    // et3ml delete fl onExit PlayState
+   
 }
 
 void MeshRenderer::onDeleteApp() 

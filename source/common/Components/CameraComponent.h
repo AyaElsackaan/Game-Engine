@@ -25,7 +25,7 @@
         uint8_t dirtyFlags = 0;
 
         // The camera position, camera forward direction and camera up direction
-        glm::vec3 eye = {0, 0, 0}, direction = {0, 0, -1}, up = {0, 1, 0};
+        glm::vec3 eye = {0, 0, 0}, direction = {0, 0, -1}, up = {0, 1, 0}; //forward*rotation
 
         CameraType type = CameraType::Perspective;
 

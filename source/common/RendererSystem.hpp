@@ -38,7 +38,7 @@ public:
                 if (cam != NULL)
                     break;
             }
-        for (int i =0;i< Ent.size();i++)
+        for (int i =1;i< Ent.size();i++)
         {
 
             MeshRenderer* mesh;
@@ -58,13 +58,15 @@ public:
                 if (mesh != NULL)
                     break;
             }
-            
+            if (mesh !=NULL && tranf !=NULL)
+            {
 
-            glUseProgram(*(mesh->getShader()));
-
-            mesh->getShader()->set("tint", glm::vec4(1,1, 1, 1)); 
-            mesh->getShader()->set("transform", cam->getVPMatrix() * tranf->to_mat4());
-            mesh->getMesh()->draw(); 
+                glUseProgram(*(mesh->getShader()));
+                
+                mesh->getShader()->set("tint", glm::vec4(1,1, 1, 1)); 
+                mesh->getShader()->set("transform", cam->getVPMatrix() * tranf->to_mat4());
+                mesh->getMesh()->draw(); 
+            }
 
 
         }

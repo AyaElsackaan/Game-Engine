@@ -4,21 +4,22 @@
 #include <glm/glm.hpp>
 #include "Component.h"
 #include <mesh/mesh.hpp>
-#include <shader.hpp>
 #include <mesh/mesh-utils.hpp>
+#include "../common/Material.hpp"
+
 using namespace GAME;
 
 class MeshRenderer: public Component {
 private:
-    ShaderProgram * Sprogram;
     Mesh *model;
+    Material* material;
 
 public:
-    MeshRenderer( int ord, ShaderProgram * S,Mesh *m);
-    void setShader(ShaderProgram * S);
+    MeshRenderer( int ord,Material* mat,Mesh *m);
     void setMesh(Mesh* m);
-    ShaderProgram* getShader() const;
     Mesh* getMesh() const;
+    void setMaterial(Material* mat);  
+    Material* getMaterial() const;
     void onStartApp() override ; //virtual/pure virtual>> to be modified
     void onStartState() override;
     void onUpdate() override;

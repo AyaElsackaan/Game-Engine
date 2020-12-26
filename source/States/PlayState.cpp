@@ -10,6 +10,7 @@
 #include "../common/Components/MeshRenderer.h"
 #include "../common/Components/TransformComponent.h"
 #include "../common//Components//CameraControllerComponent.h"
+#include "../common/Material.hpp"
 PlayState::PlayState(){
 
 }
@@ -28,6 +29,7 @@ void PlayState::setWidth(int w)
 }
 void PlayState::OnEnter()
 {
+    
     program.create();
     program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/transform.vert", GL_VERTEX_SHADER);
     program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/tint.frag", GL_FRAGMENT_SHADER);
@@ -36,8 +38,16 @@ void PlayState::OnEnter()
  ///// Entity 1
     GAME::mesh_utils::Cuboid(model, true);
 
+    Material* material1 = new Material();
+    material1->setShader(&program);
+    material1->AddUniforms("tint", glm::vec4(1,1, 1, 1)); 
 
-    Component* mesh=new MeshRenderer(0,&program,&model);
+    //////////// Render State
+    //RenderState* state = new RenderState();
+   // state->Enable_Blending = true;
+   // material1->setState(state); 
+
+    Component* mesh=new MeshRenderer(0,material1,&model);
 
 
     glm::vec3 pos={-5,0,5};
@@ -55,7 +65,7 @@ void PlayState::OnEnter()
  
      GAME::mesh_utils::Sphere(model1);
 
-    Component* mesh1 =new MeshRenderer(0,&program,&model1);
+    Component* mesh1 =new MeshRenderer(0,material1,&model1);
 
     glm::vec3 pos1={5,10,5};
     glm::vec3 rot1={0,9,0};

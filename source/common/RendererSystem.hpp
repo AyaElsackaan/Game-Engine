@@ -61,10 +61,11 @@ public:
             if (mesh !=NULL && tranf !=NULL)
             {
 
-                glUseProgram(*(mesh->getShader()));
-                
-                mesh->getShader()->set("tint", glm::vec4(1,1, 1, 1)); 
-                mesh->getShader()->set("transform", cam->getVPMatrix() * tranf->to_mat4());
+               glUseProgram(*(mesh->getMaterial()->getShader())); 
+               glm::vec4 s = std::any_cast<glm::vec4>( mesh->getMaterial()->getUniforms("tint"));
+               mesh->getMaterial()->getShader()->set("tint", s);
+
+                mesh->getMaterial()->getShader()->set("transform", cam->getVPMatrix() * tranf->to_mat4());
                 mesh->getMesh()->draw(); 
             }
 
@@ -73,5 +74,7 @@ public:
 
     }
 };
+
+                             //  mesh->getMaterial()->AddUniforms("tint", glm::vec4(1,1, 1, 1));
 
 #endif //GAME_MESH_H

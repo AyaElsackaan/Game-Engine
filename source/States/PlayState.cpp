@@ -3,7 +3,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <imgui-utils/utils.hpp>
 #include <mesh/mesh-utils.hpp>
-
+#include <texture/texture-utils.h>
 #include "PlayState.h"
 #include "../common/RendererSystem.hpp"
 #include "../common//Components//CameraComponent.h"
@@ -11,6 +11,66 @@
 #include "../common/Components/TransformComponent.h"
 #include "../common//Components//CameraControllerComponent.h"
 #include "../common/Material.hpp"
+
+#include <json/json.hpp>
+
+#include <fstream>
+#include <unordered_map>
+#include <algorithm>
+#include <cctype>
+#include <string>
+
+namespace glm {
+    template<length_t L, typename T, qualifier Q>
+    void from_json(const nlohmann::json& j, vec<L, T, Q>& v){
+        for(length_t index = 0; index < L; ++index)
+            v[index] = j[index].get<T>();
+    }
+}
+void from_json(const nlohmann::json& j, Material& m){
+
+    m.AddUniforms("albedo_tint",j.value<glm::vec3>("albedo_tint", {1.0f, 1.0f, 1.0f}));
+    m.AddUniforms("specular_map",j.value<std::string>("specular_map", "black"));
+    m.AddUniforms("specular_tint",j.value<std::string>("specular_map", "black"));
+    m.AddUniforms("specular_tint" ,j.value<glm::vec3>("specular_tint", {1.0f, 1.0f, 1.0f}));
+    m.AddUniforms("roughness_map",j.value<std::string>("roughness_map", "white"));
+    m.AddUniforms("roughness_range",j.value<glm::vec2>("roughness_scale", {0.0f, 1.0f}));
+    m.AddUniforms("ambient_occlusion_map",j.value<std::string>("ambient_occlusion_map", "white"));
+    m.AddUniforms("emissive_map",j.value<std::string>("emissive_map", "black"));
+    m.AddUniforms("emissive_tint",j.value<glm::vec3>("emissive_tint", {1.0f, 1.0f, 1.0f}));
+
+}
+void from_json(const nlohmann::json& j, LightComponent& l,TransformComponent t){
+    std::string type_name = j.value("type", "point");
+    std::transform(type_name.begin(), type_name.end(), type_name.begin(), [](char c){ return std::tolower(c); });
+    if(type_name == "directional") l.setLightType (LightType::DIRECTIONAL);
+    else if(type_name == "spot") l.setLightType (LightType::SPOT);
+    else l.setLightType (LightType::POINT);
+
+    l.setColor(j.value<glm::vec3>("color", {1,1,1}));
+    t.setRotation(j.value<glm::vec3>("direction", {0, -1, 0}));
+    t.setPosition( j.value<glm::vec3>("position", {0,0,0}));
+    l.setEnable(j.value("enabled", true));
+    if(auto it = j.find("attenuation"); it != j.end()){
+        auto& a = it.value();
+        attenuation att;
+        att.constant = a.value("constant", 0.0f);
+        att.linear = a.value("linear", 0.0f);
+       att.quadratic = a.value("quadratic", 1.0f);
+       l.setAttenuation(att);
+    } else {
+        l.setAttenuation ({0.0f, 0.0f, 1.0f});
+    }
+    if(auto it = j.find("spot_angle"); it != j.end()){
+        auto& a = it.value();
+        spot_angle sAng;
+        sAng.inner = a.value("inner", glm::quarter_pi<float>());
+        sAng.outer = a.value("outer", glm::half_pi<float>());
+        l.setAngle(sAng);
+    } else {
+       l.setAngle({glm::quarter_pi<float>(), glm::half_pi<float>()});
+    }
+}
 PlayState::PlayState(){
 
 }
@@ -35,9 +95,9 @@ void PlayState::OnEnter()
     program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/tint.frag", GL_FRAGMENT_SHADER);
     program.link();
 
+
  ///// Entity 1
     GAME::mesh_utils::Cuboid(model, true);
-
     Material* material1 = new Material();
     material1->setShader(&program);
     material1->AddUniforms("tint", glm::vec4(1,1, 1, 1)); 
@@ -158,7 +218,7 @@ void PlayState::OnDraw(double deltaTime)
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    renderEntities->RenderAll(World,World[0]);
+    renderEntities->RenderAll(World,World[0],lights);
 
         glClear(GL_DEPTH_BUFFER_BIT);
 

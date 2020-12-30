@@ -13,7 +13,7 @@ class PlayState : public State {
 
 
     vector <Entity*> World;
-
+    vector <Entity*> lights;
     GAME::ShaderProgram program;
     
     GAME::Mesh model;

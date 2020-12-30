@@ -6,14 +6,22 @@ layout(location = 1) in vec4 color;
 
 // A transformation matrix sent as a Uniform
 uniform mat4 transform;
+uniform mat4 view_projection;
+uniform vec3 camera_position;
 
 // The varying
-out vec4 vertex_color;
+//out vec4 vertex_color;
+
+out Varyings {
+    vec3 view;
+} vsout;
 
 void main() {
-    // To apply the transformation, we just multiply
-    gl_Position = transform * vec4(position, 1.0);
-    vertex_color = color;
+    vsout.view = position;
+    vec4 clip_space = view_projection * vec4(position + camera_position, 1.0);
+    gl_Position = clip_space.xyww;
 }
 
-// NOTE: Since "transform" is allowed to modify "w", we can create a matrix that applies perspective projection which is a key factor of realistic 3D visuals.
+
+
+

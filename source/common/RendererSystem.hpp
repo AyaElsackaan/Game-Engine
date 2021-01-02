@@ -176,10 +176,13 @@ public:
                 mesh->getMaterial()->getShader()->set("camera_position", cam->getEyePosition());
                 mesh->getMaterial()->getShader()->set("view_projection", cam->getVPMatrix());
                 mesh->getMaterial()->getShader()->set("object_to_world", tranf->to_mat4());
-                mesh->getMaterial()->getShader()->set("object_to_world_inv_transpose", glm::inverse(tranf->to_mat4()), true);
-                
+                mesh->getMaterial()->getShader()->set("object_to_world_inv_transpose", glm::inverse(tranf->to_mat4()), true);             
+                mesh->getMaterial()->getShader()->set("sky_light.top_color",  glm::vec3(0.0f));
+                mesh->getMaterial()->getShader()->set("sky_light.middle_color", glm::vec3(0.0f));
+                mesh->getMaterial()->getShader()->set("sky_light.bottom_color", glm::vec3(0.0f));
+         
             // glm::vec4 shadertint = std::any_cast<glm::vec4>( mesh->getMaterial()->getUniforms("tint"));
-     //     mesh->getMaterial()->getShader()->set("tint", shadertint);
+            // mesh->getMaterial()->getShader()->set("tint", shadertint);
                 
                 glm::vec3 s = std::any_cast<glm::vec3>( mesh->getMaterial()->getUniforms("albedo_tint"));
                 mesh->getMaterial()->getShader()->set("material.albedo_tint", s);
@@ -223,8 +226,4 @@ public:
 
 
 #endif //GAME_MESH_H
- // program.set("sky_light.top_color", sky_light.enabled ? sky_light.top_color : glm::vec3(0.0f));
-       /// program.set("sky_light.middle_color", sky_light.enabled ? sky_light.middle_color : glm::vec3(0.0f));
-      
-       /// program.set("sky_light.bottom_color", sky_light.enabled ? sky_light.bottom_color : glm::vec3(0.0f));
-         
+ 

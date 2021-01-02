@@ -19,6 +19,7 @@
 #include <cctype>
 #include <string>
 
+
 namespace glm {
     template<length_t L, typename T, qualifier Q>
     void from_json(const nlohmann::json& j, vec<L, T, Q>& v){
@@ -26,50 +27,7 @@ namespace glm {
             v[index] = j[index].get<T>();
     }
 }
-void from_json(const nlohmann::json& j, Material& m){
 
-    m.AddUniforms("albedo_tint",j.value<glm::vec3>("albedo_tint", {0.0f, 0.0f, 0.0f}));
-    m.AddUniforms("specular_map",j.value<std::string>("specular_map", "black"));
-    m.AddUniforms("specular_tint",j.value<std::string>("specular_map", "black"));
-    m.AddUniforms("specular_tint" ,j.value<glm::vec3>("specular_tint", {0.0f, 0.0f, 0.0f}));
-    m.AddUniforms("roughness_map",j.value<std::string>("roughness_map", "white"));
-    m.AddUniforms("roughness_range",j.value<glm::vec2>("roughness_scale", {0.0f, 1.0f}));
-    m.AddUniforms("ambient_occlusion_map",j.value<std::string>("ambient_occlusion_map", "white"));
-    m.AddUniforms("emissive_map",j.value<std::string>("emissive_map", "black"));
-    m.AddUniforms("emissive_tint",j.value<glm::vec3>("emissive_tint", {1.0f, 1.0f, 1.0f}));
-
-}
-void from_json(const nlohmann::json& j, LightComponent& l,TransformComponent t){
-    std::string type_name = j.value("type", "point");
-    std::transform(type_name.begin(), type_name.end(), type_name.begin(), [](char c){ return std::tolower(c); });
-    if(type_name == "directional") l.setLightType (LightType::DIRECTIONAL);
-    else if(type_name == "spot") l.setLightType (LightType::SPOT);
-    else l.setLightType (LightType::POINT);
-
-    l.setColor(j.value<glm::vec3>("color", {1,1,1}));
-    t.setRotation(j.value<glm::vec3>("direction", {0, -1, 0}));
-    t.setPosition( j.value<glm::vec3>("position", {0,0,0}));
-    l.setEnable(j.value("enabled", true));
-    if(auto it = j.find("attenuation"); it != j.end()){
-        auto& a = it.value();
-        attenuation att;
-        att.constant = a.value("constant", 0.0f);
-        att.linear = a.value("linear", 0.0f);
-       att.quadratic = a.value("quadratic", 1.0f);
-       l.setAttenuation(att);
-    } else {
-        l.setAttenuation ({0.0f, 0.0f, 1.0f});
-    }
-    if(auto it = j.find("spot_angle"); it != j.end()){
-        auto& a = it.value();
-        spot_angle sAng;
-        sAng.inner = a.value("inner", glm::quarter_pi<float>());
-        sAng.outer = a.value("outer", glm::half_pi<float>());
-        l.setAngle(sAng);
-    } else {
-       l.setAngle({glm::quarter_pi<float>(), glm::half_pi<float>()});
-    }
-}
 PlayState::PlayState(){
 
 }
@@ -93,6 +51,10 @@ void PlayState::OnEnter()
     program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/transform.vert", GL_VERTEX_SHADER);
     program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/tint.frag", GL_FRAGMENT_SHADER);
     program.link();
+    sky_program.create();
+        sky_program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/sky.vert", GL_VERTEX_SHADER);
+        sky_program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/sky.frag", GL_FRAGMENT_SHADER);
+        sky_program.link();
 
     //////////////////////////////////////////////////////////////////
     ///// set light values Light Entities
@@ -109,14 +71,10 @@ void PlayState::OnEnter()
     Component* SpotL=new LightComponent(1,LightType::SPOT,true,s,{1,0,0},{0.0f, 0.0f, 1.0f});
     LightComponent* SpotLight;
     SpotLight = dynamic_cast<LightComponent*>(SpotL);
-   // SpotLight->setLightType(LightType::SPOT);
     Entity* spotEntity = new Entity();
-
     spotEntity->addComponent(SpotLight);
-    spotEntity->addComponent(SpotTrans);
-    
+    spotEntity->addComponent(SpotTrans);  
     lights.push_back(spotEntity);
-
     ///// Directional Light
      glm::vec3 DirPos={1,1,4};
     glm::vec3 DirRot={-1,-1,-1};
@@ -124,47 +82,78 @@ void PlayState::OnEnter()
     Component* Dirtransform=new TransformComponent(1,DirPos, DirRot,DirScale);
     TransformComponent* DirTrans;
     DirTrans = dynamic_cast<TransformComponent*>(Dirtransform);
-
-    Component* DirL=new LightComponent(1,LightType::DIRECTIONAL,false,s,{1.0f, 0.0f, 0.0f},{0.0f, 0.0f, 1.0f});
+    Component* DirL=new LightComponent(1,LightType::DIRECTIONAL,true,s,{1.0f, 1.0f, 1.0f},{0.0f, 0.0f, 1.0f});
     LightComponent* DirLight;
     DirLight = dynamic_cast<LightComponent*>(DirL);
     Entity* DirEntity = new Entity();
-
     DirEntity->addComponent(DirLight);
     DirEntity->addComponent(DirTrans);
-    
-
     lights.push_back(DirEntity);
     ///////////////////////////////////////////////////////////////////
     // Textures
-        Texture2D* texture = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/metal/albedo.jpg");
+        Texture2D* texturem0 = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/metal/albedo.jpg");
+        textures["metal_albedo"] = texturem0;
+        Texture2D* texturem1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/metal/specular.jpg");
+        textures["metal_specular"] = texturem1;
+        Texture2D* texturem2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/metal/roughness.jpg");
+        textures["metal_roughness"] = texturem2;
+        
+        Texture2D* texture = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/wood/albedo.jpg");
         textures["wood_albedo"] = texture;
-        Texture2D* texture1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/metal/specular.jpg");
+        Texture2D* texture1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/wood/specular.jpg");
         textures["wood_specular"] = texture1;
-        Texture2D* texture2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/metal/roughness.jpg");
+        Texture2D* texture2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/wood/roughness.jpg");
         textures["wood_roughness"] = texture2;
+        
         Texture2D* moon = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/moon.jpg");
         textures["moon"] = texture;
         Sampler2D* sampler = new Sampler2D();
         for(GLuint unit = 0; unit < 5; ++unit) sampler->bind(unit);
-    ///// set uniforms
     
  ////////////////////////////////////////// Entity 1 ////////////////////////////////////
      Entity* E1=new Entity();
     ////// Mesh
     meshes["house"] = std::make_unique<GAME::Mesh>();
-    //GAME::mesh_utils::Cuboid(*(meshes["cube"]));
     GAME::mesh_utils::loadOBJ(*(meshes["house"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/House/House.obj");
     ///// Material
     Material* material = new Material();
+    
+    float alpha = 0.5;
+
+   /// Set RenderState
+    RenderState* Rstate = new RenderState();
+    if (alpha == 1)
+    {
+        Rstate->Opaque = true; // 3ashan el tint akher haga feh b 1
+        Rstate->Enable_DepthTesting = true;
+    }
+    else
+    {
+        Rstate->Opaque = false; // 3ashan el tint akher haga feh b 1
+        Rstate->Enable_DepthTesting = false;
+    }
+    Rstate->depth_function = GL_LEQUAL;
+    Rstate->enable_transparent_depth_write = true;
+    Rstate->Enable_Culling = true;
+    Rstate->culled_face = GL_BACK;
+
+    Rstate->front_face_winding = GL_CCW;
+    Rstate->Enable_Blending = true;
+    Rstate->blend_equation = GL_FUNC_ADD;
+    Rstate->blend_source_function = GL_SRC_ALPHA;
+    Rstate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
+    Rstate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
+    Rstate->enable_alpha_to_coverage = false;
+    Rstate->enable_alpha_test = true;
+    Rstate->alpha_test_threshold = 0.5;
+    
+    material->setState(Rstate);
+    ///
+    material->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
+    material->AddUniforms("alpha",alpha);
     pair<Texture2D*,Sampler2D*> pi;
     pi.first = texture;
     pi.second = sampler;
-    material->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
-    // Set Opaque 
-    RenderState* Rstate = new RenderState();
-    Rstate->Opaque = true; // 3ashan el tint akher haga feh b 1
-    material->setState(Rstate);
     material->AddUniforms("albedo_map", pi);
     glm::vec3 temp = {1.0f, 1.0f, 1.0f};
     material->AddUniforms("albedo_tint",temp);
@@ -181,7 +170,6 @@ void PlayState::OnEnter()
     material->AddUniforms("emissive_map",pi);
     material->AddUniforms("emissive_tint",temp1);
     material->setShader(&program);
-    //material->AddUniforms("tint", glm::vec4(1,1, 1, 1)); 
     ////// MeshRanderer Component
     Component* mesh=new MeshRenderer(0,material,&*(meshes["house"]));
    /////// Transform Component
@@ -198,12 +186,63 @@ void PlayState::OnEnter()
 
  ////////////////////////////////////////// Entity 2 ////////////////////////////////////
     Entity* E2=new Entity();
+    /// Set Material
+    ///// Material
+    Material* material1 = new Material();
+    
+    alpha = 1;
 
+   /// Set RenderState
+    RenderState* rstate = new RenderState();
+    if (alpha == 1)
+    {
+        rstate->Opaque = true; // 3ashan el tint akher haga feh b 1
+        rstate->Enable_DepthTesting = true;
+    }
+    else
+    {
+        rstate->Opaque = false; // 3ashan el tint akher haga feh b 1
+        rstate->Enable_DepthTesting = false;
+    }
+    rstate->depth_function = GL_LEQUAL;
+    rstate->enable_transparent_depth_write = true;
+    rstate->Enable_Culling = true;
+    rstate->culled_face = GL_BACK;
+
+    rstate->front_face_winding = GL_CCW;
+    rstate->Enable_Blending = true;
+    rstate->blend_equation = GL_FUNC_ADD;
+    rstate->blend_source_function = GL_SRC_ALPHA;
+    rstate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
+    rstate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
+    rstate->enable_alpha_to_coverage = false;
+    rstate->enable_alpha_test = true;
+    rstate->alpha_test_threshold = 0.5;
+    
+    material1->setState(Rstate);
+    ///
+    material1->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
+    material1->AddUniforms("alpha",alpha);
+    //pair<Texture2D*,Sampler2D*> pi;
+    pi.first = texturem0;
+    pi.second = sampler;
+    material1->AddUniforms("albedo_map", pi);
+    material1->AddUniforms("albedo_tint",temp);
+    pi.first = texturem1;
+    material1->AddUniforms("specular_map",pi);
+    material1->AddUniforms("specular_tint" ,temp2);
+    pi.first = texturem2;
+    material1->AddUniforms("roughness_map",pi);
+    material1->AddUniforms("roughness_range",temps);
+    pi.first = moon; 
+    material1->AddUniforms("emissive_map",pi);
+    material1->AddUniforms("emissive_tint",temp1);
+    material1->setShader(&program);
      ////// Mesh
     meshes["sphere"] = std::make_unique<GAME::Mesh>();
     GAME::mesh_utils::Sphere(*(meshes["sphere"]), {64, 32}, false);
     ////// MeshRanderer Component
-    Component* mesh1 =new MeshRenderer(0,material,&*(meshes["sphere"]));
+    Component* mesh1 =new MeshRenderer(0,material1,&*(meshes["sphere"]));
    /////// Transform Component
     glm::vec3 pos1={-20,20,5};
     glm::vec3 rot1={0,9,0};
@@ -242,6 +281,8 @@ void PlayState::OnEnter()
 
  //////////////////////////////////////////////////////////////////////////////////////////////////////
         
+        meshes["cube"] = std::make_unique<GAME::Mesh>();
+        GAME::mesh_utils::Cuboid(*(meshes["cube"]));
 
 
     //// Pushing Entities into world vector
@@ -264,13 +305,18 @@ void PlayState::OnEnter()
 }
 void PlayState::OnDraw(double deltaTime)
 {
+   // glEnable(GL_BLEND);
+   // glBlendEquation(GL_FUNC_ADD);
+   // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     ///set delta time
     CameraController* cam_delta;
+    CameraComponent* camSky;
     vector<Component*> controller_setTime;
     controller_setTime = World[0]->getComponents();
     cam_delta = dynamic_cast<CameraController*>( controller_setTime[2]);
-
+    camSky = dynamic_cast<CameraComponent*>( controller_setTime[1]);
+ 
     cam_delta->setDeltaTime(deltaTime);
     cam_delta->onUpdate();
 
@@ -294,6 +340,18 @@ void PlayState::OnDraw(double deltaTime)
 
     renderEntities->RenderAll(World,World[0],lights);
 
+    glUseProgram(sky_program);
+
+    sky_program.set("view_projection", camSky->getVPMatrix());
+    sky_program.set("camera_position", camSky->getEyePosition());
+    sky_program.set("sky_light.top_color", sky_light.enabled ? sky_light.top_color : glm::vec3(0.0f));
+    sky_program.set("sky_light.middle_color", sky_light.enabled ? sky_light.middle_color : glm::vec3(0.0f));
+    sky_program.set("sky_light.bottom_color", sky_light.enabled ? sky_light.bottom_color : glm::vec3(0.0f));
+    sky_program.set("exposure", sky_box_exposure);
+
+        glCullFace(GL_FRONT);
+        meshes["cube"]->draw();
+        glCullFace(GL_BACK);
         glClear(GL_DEPTH_BUFFER_BIT);
 
 

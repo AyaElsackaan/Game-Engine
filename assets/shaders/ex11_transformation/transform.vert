@@ -9,7 +9,7 @@ uniform mat4 object_to_world;
 uniform mat4 object_to_world_inv_transpose;
 uniform mat4 view_projection;
 uniform vec3 camera_position;
-
+uniform float alpha;
 out Varyings {
     vec4 color;
     vec2 tex_coord;
@@ -23,6 +23,6 @@ void main() {
     vsout.view = camera_position - vsout.world;
     vsout.normal = normalize((object_to_world_inv_transpose * vec4(normal, 0.0f)).xyz);
     gl_Position = view_projection * vec4(vsout.world, 1.0);
-    vsout.color = color;
+    vsout.color = vec4(color.xyz,alpha);
     vsout.tex_coord = tex_coord;
 }

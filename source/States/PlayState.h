@@ -9,14 +9,19 @@
 #include <mesh/mesh.hpp>
 #include "../common/Texture2D.h"
 #include "../common/Sampler2D.h"
+struct SkyLight {
+    bool enabled;
+    glm::vec3 top_color, middle_color, bottom_color;
+};
 
 class PlayState : public State {
 
 
     vector <Entity*> World;
     vector <Entity*> lights;
-    GAME::ShaderProgram program;
-    
+    GAME::ShaderProgram program, sky_program;
+    SkyLight sky_light;
+    float sky_box_exposure = 2.0f;
     std::unordered_map<std::string, std::unique_ptr<GAME::Mesh>> meshes;
     std::unordered_map<std::string, Texture2D*> textures;
     GLuint sampler;

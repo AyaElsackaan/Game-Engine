@@ -26,16 +26,16 @@ struct Light {
     float inner_angle, outer_angle;
 };
 
-//struct SkyLight {
-//    vec3 top_color, middle_color, bottom_color;
-//};
+struct SkyLight {
+    vec3 top_color, middle_color, bottom_color;
+};
 
 #define MAX_LIGHT_COUNT 16
 
 uniform TexturedMaterial material;
 uniform Light lights[MAX_LIGHT_COUNT];
 uniform int light_count;
-//uniform SkyLight sky_light;
+uniform SkyLight sky_light;
 //uniform vec4 tint; // A tint is something we can use to modify colors
 
 out vec4 frag_color;
@@ -46,11 +46,11 @@ void main() {
     vec3 normal = normalize(fsin.normal);
     vec3 view = normalize(fsin.view);
 
-    //vec3 ambient = sampled.ambient; //* (normal.y > 0 ?
-      //  mix(sky_light.middle_color, sky_light.top_color, normal.y) :
-        //mix(sky_light.middle_color, sky_light.bottom_color, -normal.y));
+    vec3 ambient = sampled.ambient * (normal.y > 0 ?
+        mix(sky_light.middle_color, sky_light.top_color, normal.y) :
+        mix(sky_light.middle_color, sky_light.bottom_color, -normal.y));
 
-    vec3 accumulated_light = sampled.emissive + sampled.ambient;
+    vec3 accumulated_light = sampled.emissive + ambient;
 
     int count = min(light_count, MAX_LIGHT_COUNT);
     for(int index = 0; index < count; index++){

@@ -59,7 +59,7 @@ void PlayState::OnEnter()
     //////////////////////////////////////////////////////////////////
     ///// set light values Light Entities
                      //// spot light ////
-     glm::vec3 spotPos={0,1,4};
+    glm::vec3 spotPos={0,1,4};
     glm::vec3 spotRot={0,0,-1};
     glm::vec3 spotScale={1,1,1};
     Component* Spottransform=new TransformComponent(1,spotPos, spotRot,spotScale);
@@ -107,6 +107,7 @@ void PlayState::OnEnter()
         
         Texture2D* moon = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/moon.jpg");
         textures["moon"] = texture;
+        
         Sampler2D* sampler = new Sampler2D();
         for(GLuint unit = 0; unit < 5; ++unit) sampler->bind(unit);
     
@@ -118,7 +119,7 @@ void PlayState::OnEnter()
     ///// Material
     Material* material = new Material();
     
-    float alpha = 0.5;
+    float alpha = 1.0f;
 
    /// Set RenderState
     RenderState* Rstate = new RenderState();
@@ -142,9 +143,9 @@ void PlayState::OnEnter()
     Rstate->blend_equation = GL_FUNC_ADD;
     Rstate->blend_source_function = GL_SRC_ALPHA;
     Rstate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
-    Rstate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
+    Rstate->blend_constant_color = {1.0f,1.0f,1.0f,0.5f};
     Rstate->enable_alpha_to_coverage = false;
-    Rstate->enable_alpha_test = true;
+    Rstate->enable_alpha_test = false;
     Rstate->alpha_test_threshold = 0.5;
     
     material->setState(Rstate);
@@ -173,7 +174,7 @@ void PlayState::OnEnter()
     ////// MeshRanderer Component
     Component* mesh=new MeshRenderer(0,material,&*(meshes["house"]));
    /////// Transform Component
-    glm::vec3 pos={0,0,0};
+    glm::vec3 pos={-20,0,0};
     glm::vec3 rot={0,9,0};
     glm::vec3 sc={1,1,1};
     Component* transform=new TransformComponent(1,pos, rot, sc);
@@ -190,7 +191,7 @@ void PlayState::OnEnter()
     ///// Material
     Material* material1 = new Material();
     
-    alpha = 1;
+    alpha = 0.5f;
 
    /// Set RenderState
     RenderState* rstate = new RenderState();
@@ -216,10 +217,10 @@ void PlayState::OnEnter()
     rstate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
     rstate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
     rstate->enable_alpha_to_coverage = false;
-    rstate->enable_alpha_test = true;
+    rstate->enable_alpha_test = false;
     rstate->alpha_test_threshold = 0.5;
     
-    material1->setState(Rstate);
+    material1->setState(rstate);
     ///
     material1->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
     material1->AddUniforms("alpha",alpha);
@@ -244,7 +245,7 @@ void PlayState::OnEnter()
     ////// MeshRanderer Component
     Component* mesh1 =new MeshRenderer(0,material1,&*(meshes["sphere"]));
    /////// Transform Component
-    glm::vec3 pos1={-20,20,5};
+    glm::vec3 pos1={-10,0,0};
     glm::vec3 rot1={0,9,0};
     glm::vec3 sc1={10,10,10};
     Component* transform1 =new TransformComponent(1,pos1, rot1, sc1);
@@ -294,11 +295,11 @@ void PlayState::OnEnter()
 
         glClearColor(0, 0, 1, 0);
 
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LEQUAL);
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        glFrontFace(GL_CCW);
+       // glEnable(GL_DEPTH_TEST);
+      //  glDepthFunc(GL_LEQUAL);
+      //  glEnable(GL_CULL_FACE);
+       // glCullFace(GL_BACK);
+       // glFrontFace(GL_CCW);
 
         glClearColor(0, 0, 1, 1);
 
@@ -338,20 +339,22 @@ void PlayState::OnDraw(double deltaTime)
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    renderEntities->RenderAll(World,World[0],lights);
-
     glUseProgram(sky_program);
 
     sky_program.set("view_projection", camSky->getVPMatrix());
     sky_program.set("camera_position", camSky->getEyePosition());
-    sky_program.set("sky_light.top_color", sky_light.enabled ? sky_light.top_color : glm::vec3(0.0f));
-    sky_program.set("sky_light.middle_color", sky_light.enabled ? sky_light.middle_color : glm::vec3(0.0f));
-    sky_program.set("sky_light.bottom_color", sky_light.enabled ? sky_light.bottom_color : glm::vec3(0.0f));
+    sky_program.set("sky_light.top_color", sky_light.enabled ? sky_light.top_color : glm::vec3(1.0f));
+    sky_program.set("sky_light.middle_color", sky_light.enabled ? sky_light.middle_color : glm::vec3(1.0f));
+    sky_program.set("sky_light.bottom_color", sky_light.enabled ? sky_light.bottom_color : glm::vec3(1.0f));
     sky_program.set("exposure", sky_box_exposure);
 
         glCullFace(GL_FRONT);
         meshes["cube"]->draw();
         glCullFace(GL_BACK);
+
+    renderEntities->RenderAll(World,World[0],lights);
+
+    
         glClear(GL_DEPTH_BUFFER_BIT);
 
 

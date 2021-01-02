@@ -136,8 +136,28 @@ public:
             }
             if (mesh !=NULL && tranf !=NULL)
             {
-                glUseProgram(*(mesh->getMaterial()->getShader())); 
+                ////////////////////////////////////// Use render state to set OpenGl state /////////////////////////////////////////////////
+           
+            
+           RenderState* Rstate;
+           Rstate = mesh->getMaterial()->getState();
+           if(Rstate->Enable_DepthTesting) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+           glDepthFunc(Rstate->depth_function);
+           if(Rstate->Enable_Culling) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
+           glCullFace(Rstate->culled_face);
+           glFrontFace(Rstate->front_face_winding);
+             glEnable(GL_BLEND);
+            glBlendEquation(Rstate->blend_equation);
+            glBlendFunc(Rstate->blend_source_function, Rstate->blend_destination_function);
+           //glBlendColor(Rstate->blend_constant_color.r, Rstate->blend_constant_color.g, Rstate->blend_constant_color.b, Rstate->blend_constant_color.a);
 
+           if(Rstate->enable_alpha_to_coverage) glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+            else glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);       
+            glUseProgram(*(mesh->getMaterial()->getShader())); 
+
+            float shaderalpha = std::any_cast<float>( mesh->getMaterial()->getUniforms("alpha"));
+            mesh->getMaterial()->getShader()->set("alpha", shaderalpha);  
+                ///////////////////////////////////// Send Light to Shader /////////////////////////////////////////////
                 int light_count = 0;
                  for (int j =0;j< ShaderTransform.size();j++)
                 {
@@ -168,22 +188,20 @@ public:
                     light_count++;
                     if(ShaderLights.size() >= MAX_LIGHT_COUNT) break;
                 }
-
+                
                 int size = ShaderLights.size();
                 mesh->getMaterial()->getShader()->set("light_count",light_count );
 
-                // send uniforms
+                /////////////////////////////// send material uniforms ////////////////////////////////////////////
                 mesh->getMaterial()->getShader()->set("camera_position", cam->getEyePosition());
                 mesh->getMaterial()->getShader()->set("view_projection", cam->getVPMatrix());
                 mesh->getMaterial()->getShader()->set("object_to_world", tranf->to_mat4());
-                mesh->getMaterial()->getShader()->set("object_to_world_inv_transpose", glm::inverse(tranf->to_mat4()), true);             
+                mesh->getMaterial()->getShader()->set("object_to_world_inv_transpose", glm::inverse(tranf->to_mat4()), true);              
                 mesh->getMaterial()->getShader()->set("sky_light.top_color",  glm::vec3(0.0f));
                 mesh->getMaterial()->getShader()->set("sky_light.middle_color", glm::vec3(0.0f));
-                mesh->getMaterial()->getShader()->set("sky_light.bottom_color", glm::vec3(0.0f));
-         
+                mesh->getMaterial()->getShader()->set("sky_light.bottom_color", glm::vec3(0.0f));     
             // glm::vec4 shadertint = std::any_cast<glm::vec4>( mesh->getMaterial()->getUniforms("tint"));
-            // mesh->getMaterial()->getShader()->set("tint", shadertint);
-                
+            // mesh->getMaterial()->getShader()->set("tint", shadertint);  
                 glm::vec3 s = std::any_cast<glm::vec3>( mesh->getMaterial()->getUniforms("albedo_tint"));
                 mesh->getMaterial()->getShader()->set("material.albedo_tint", s);
                 glm::vec3 s1 = std::any_cast<glm::vec3>( mesh->getMaterial()->getUniforms("specular_tint"));
@@ -192,8 +210,7 @@ public:
                 mesh->getMaterial()->getShader()->set("material.roughness_range", r);
                 glm::vec3 s2 = std::any_cast<glm::vec3>( mesh->getMaterial()->getUniforms("emissive_tint"));
                 mesh->getMaterial()->getShader()->set("material.emissive_tint", s2);
-
-                // send texture
+                ///////////////////////////////////// send texture ////////////////////////
                 pair<Texture2D*,Sampler2D*> pi = std::any_cast<pair<Texture2D*,Sampler2D*>>( mesh->getMaterial()->getUniforms("albedo_map"));
                 glActiveTexture(GL_TEXTURE0);
                 pi.first->bind();
@@ -214,7 +231,9 @@ public:
                 pi.first->bind();
                 mesh->getMaterial()->getShader()->set("material.emissive_map", 3);
             
-               //mesh->getMaterial()->getShader()->set("transform", cam->getVPMatrix() * tranf->to_mat4());
+            
+               
+        ////////////////////////////////////// Draw ////////////////////////////////
                mesh->getMesh()->draw(); 
             }
 

@@ -10,8 +10,8 @@
 #include "../common/Texture2D.h"
 #include "../common/Sampler2D.h"
 struct SkyLight {
-    bool enabled;
-    glm::vec3 top_color, middle_color, bottom_color;
+    bool enabled = true;
+    glm::vec3 top_color = {0,1,1}, middle_color{0,0.5,0.5}, bottom_color{0,0.5,0.5};
 };
 
 class PlayState : public State {

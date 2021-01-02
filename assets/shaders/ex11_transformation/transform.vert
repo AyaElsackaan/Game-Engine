@@ -9,7 +9,9 @@ uniform mat4 object_to_world;
 uniform mat4 object_to_world_inv_transpose;
 uniform mat4 view_projection;
 uniform vec3 camera_position;
+
 uniform float alpha;
+
 out Varyings {
     vec4 color;
     vec2 tex_coord;

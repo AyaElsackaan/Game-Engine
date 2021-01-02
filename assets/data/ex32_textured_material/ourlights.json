@@ -1,0 +1,42 @@
+{
+  "sky": {
+    "top_color": [0.25, 0.3, 0.5],
+    "middle_color": [0.35, 0.35, 0.4],
+    "bottom_color": [0.25, 0.25, 0.25]
+  },
+  "lights": [
+    {
+      "type": "directional",
+	  "enable" : true,
+	  "spot_angle": {
+        "inner": 0.78539816339,
+        "outer": 1.57079632679
+	   },
+	   "attenuation": {
+        "constant": 0,
+        "linear": 1,
+        "quadratic": 0
+      },
+      "color": [1, 0.8, 0.2],	 
+      "direction": [-1, -1, -1],
+	  "position": [0, 1, -4]
+    },
+    {
+      "type": "spot",
+	  "enable" : true,
+	  "spot_angle": {
+        "inner": 0.78539816339,
+        "outer": 1.57079632679
+      },
+	  "attenuation": {
+        "constant": 0,
+        "linear": 1,
+        "quadratic": 0
+      },
+      "color": [1, 0.1, 0.2],
+      "position": [0, 1, -4],
+      "direction": [0, 0, 1],
+      
+    }
+  ]
+}

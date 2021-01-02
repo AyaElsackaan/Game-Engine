@@ -25,7 +25,7 @@
         sampler2D specular_map;
         vec3 specular_tint;
 
-        sampler2D ambient_occlusion_map;
+       // sampler2D ambient_occlusion_map;
 
         sampler2D roughness_map;      
         vec2 roughness_range;
@@ -39,7 +39,7 @@
         mat.diffuse = tex_mat.albedo_tint * texture(tex_mat.albedo_map, tex_coord).rgb;
         mat.specular = tex_mat.specular_tint * texture(tex_mat.specular_map, tex_coord).rgb;
         mat.emissive = tex_mat.emissive_tint * texture(tex_mat.emissive_map, tex_coord).rgb;
-        mat.ambient = mat.diffuse * texture(tex_mat.ambient_occlusion_map, tex_coord).r;
+        mat.ambient = mat.diffuse;
 
         float roughness = mix(tex_mat.roughness_range.x, tex_mat.roughness_range.y,
             texture(tex_mat.roughness_map, tex_coord).r);

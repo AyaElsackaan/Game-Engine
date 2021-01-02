@@ -23,17 +23,10 @@ struct spot_angle{
 class LightComponent: public Component {
 private:
     LightType type;
-
-   // glm::vec3 diffuse, specular, ambient;
-
-    bool enabled;
-
+    bool enabled = true;
     glm::vec3 color;
-
     spot_angle angle;
     attenuation atten;
-   // glm::vec3 position; // Used for Point and Spot Lights only
-   // glm::vec3 direction; // Used for Directional and Spot Lights only
  
     
 public:
@@ -45,11 +38,18 @@ public:
       void setLightType(LightType t);
       void setEnable(bool enable);
 
-      LightType getLightType();
+      int getLightType();
       glm::vec3 getColor();
       attenuation getAttenuation();
       spot_angle getAngle();
       bool getEnable();
+
+    void onStartApp() override ; //virtual/pure virtual>> to be modified
+    void onStartState() override;
+    void onUpdate() override;
+    void onDeleteApp() override;
+    void onDeleteState() override;
+
 
 
 };

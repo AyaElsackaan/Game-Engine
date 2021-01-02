@@ -7,7 +7,8 @@
 #include <application.hpp>
 #include <shader.hpp>
 #include <mesh/mesh.hpp>
-
+#include "../common/Texture2D.h"
+#include "../common/Sampler2D.h"
 
 class PlayState : public State {
 
@@ -16,8 +17,9 @@ class PlayState : public State {
     vector <Entity*> lights;
     GAME::ShaderProgram program;
     
-    GAME::Mesh model;
-    GAME::Mesh model1;
+    std::unordered_map<std::string, std::unique_ptr<GAME::Mesh>> meshes;
+    std::unordered_map<std::string, Texture2D*> textures;
+    GLuint sampler;
 
 
     GAME::Application* application;

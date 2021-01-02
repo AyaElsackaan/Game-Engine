@@ -7,6 +7,7 @@ LightComponent::LightComponent(int ord,LightType t,bool enable,spot_angle ang,gl
     angle = ang;
     color = col;
     atten = s;
+    type = t;
 
 }
 
@@ -30,10 +31,9 @@ void LightComponent::setEnable(bool enable)
 {
     enabled = enable;
 }
-
-LightType LightComponent::getLightType()
+int LightComponent::getLightType()
 {
-    return type;
+    return (int)type;
 }
 glm::vec3 LightComponent::getColor()
 {
@@ -51,3 +51,8 @@ bool LightComponent::getEnable()
 {
     return enabled;
 }
+void LightComponent::onStartApp(){}//virtual/pure virtual>> to be modified
+void LightComponent::onStartState() {}
+void LightComponent::onUpdate(){}
+void LightComponent::onDeleteApp(){}
+void LightComponent::onDeleteState() {}

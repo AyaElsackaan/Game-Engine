@@ -2,6 +2,7 @@
 
      Sampler2D::Sampler2D()
      {
+         glGenSamplers(1, &sampler);
         glSamplerParameteri(sampler, GL_TEXTURE_MAG_FILTER, magnification_filter);
         glSamplerParameteri(sampler, GL_TEXTURE_MIN_FILTER, minification_filter);
         glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, wrap_s);

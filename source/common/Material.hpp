@@ -10,6 +10,7 @@
             // shader ,uniforms , render state
 
             RenderState* state;
+            
             GAME::ShaderProgram* Sprogram;
             
             std::map<std::string,std::any> uniforms;

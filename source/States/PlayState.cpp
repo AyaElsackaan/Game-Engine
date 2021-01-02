@@ -15,7 +15,6 @@
 #include <json/json.hpp>
 
 #include <fstream>
-#include <unordered_map>
 #include <algorithm>
 #include <cctype>
 #include <string>
@@ -29,10 +28,10 @@ namespace glm {
 }
 void from_json(const nlohmann::json& j, Material& m){
 
-    m.AddUniforms("albedo_tint",j.value<glm::vec3>("albedo_tint", {1.0f, 1.0f, 1.0f}));
+    m.AddUniforms("albedo_tint",j.value<glm::vec3>("albedo_tint", {0.0f, 0.0f, 0.0f}));
     m.AddUniforms("specular_map",j.value<std::string>("specular_map", "black"));
     m.AddUniforms("specular_tint",j.value<std::string>("specular_map", "black"));
-    m.AddUniforms("specular_tint" ,j.value<glm::vec3>("specular_tint", {1.0f, 1.0f, 1.0f}));
+    m.AddUniforms("specular_tint" ,j.value<glm::vec3>("specular_tint", {0.0f, 0.0f, 0.0f}));
     m.AddUniforms("roughness_map",j.value<std::string>("roughness_map", "white"));
     m.AddUniforms("roughness_range",j.value<glm::vec2>("roughness_scale", {0.0f, 1.0f}));
     m.AddUniforms("ambient_occlusion_map",j.value<std::string>("ambient_occlusion_map", "white"));
@@ -95,89 +94,164 @@ void PlayState::OnEnter()
     program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/tint.frag", GL_FRAGMENT_SHADER);
     program.link();
 
+    //////////////////////////////////////////////////////////////////
+    ///// set light values Light Entities
+                     //// spot light ////
+     glm::vec3 spotPos={0,1,4};
+    glm::vec3 spotRot={0,0,-1};
+    glm::vec3 spotScale={1,1,1};
+    Component* Spottransform=new TransformComponent(1,spotPos, spotRot,spotScale);
+    TransformComponent* SpotTrans;
+    SpotTrans = dynamic_cast<TransformComponent*>(Spottransform);
+    spot_angle s;
+    s.inner = 0.78539816339;
+    s.outer = 1.57079632679;
+    Component* SpotL=new LightComponent(1,LightType::SPOT,true,s,{1,0,0},{0.0f, 0.0f, 1.0f});
+    LightComponent* SpotLight;
+    SpotLight = dynamic_cast<LightComponent*>(SpotL);
+   // SpotLight->setLightType(LightType::SPOT);
+    Entity* spotEntity = new Entity();
 
- ///// Entity 1
-    GAME::mesh_utils::Cuboid(model, true);
-    Material* material1 = new Material();
-    material1->setShader(&program);
-    material1->AddUniforms("tint", glm::vec4(1,1, 1, 1)); 
+    spotEntity->addComponent(SpotLight);
+    spotEntity->addComponent(SpotTrans);
+    
+    lights.push_back(spotEntity);
 
-    //////////// Render State
-    //RenderState* state = new RenderState();
-   // state->Enable_Blending = true;
-   // material1->setState(state); 
+    ///// Directional Light
+     glm::vec3 DirPos={1,1,4};
+    glm::vec3 DirRot={-1,-1,-1};
+    glm::vec3 DirScale={1,1,1};
+    Component* Dirtransform=new TransformComponent(1,DirPos, DirRot,DirScale);
+    TransformComponent* DirTrans;
+    DirTrans = dynamic_cast<TransformComponent*>(Dirtransform);
 
-    Component* mesh=new MeshRenderer(0,material1,&model);
+    Component* DirL=new LightComponent(1,LightType::DIRECTIONAL,false,s,{1.0f, 0.0f, 0.0f},{0.0f, 0.0f, 1.0f});
+    LightComponent* DirLight;
+    DirLight = dynamic_cast<LightComponent*>(DirL);
+    Entity* DirEntity = new Entity();
 
+    DirEntity->addComponent(DirLight);
+    DirEntity->addComponent(DirTrans);
+    
 
-    glm::vec3 pos={-5,0,5};
+    lights.push_back(DirEntity);
+    ///////////////////////////////////////////////////////////////////
+    // Textures
+        Texture2D* texture = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/metal/albedo.jpg");
+        textures["wood_albedo"] = texture;
+        Texture2D* texture1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/metal/specular.jpg");
+        textures["wood_specular"] = texture1;
+        Texture2D* texture2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/metal/roughness.jpg");
+        textures["wood_roughness"] = texture2;
+        Texture2D* moon = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/moon.jpg");
+        textures["moon"] = texture;
+        Sampler2D* sampler = new Sampler2D();
+        for(GLuint unit = 0; unit < 5; ++unit) sampler->bind(unit);
+    ///// set uniforms
+    
+ ////////////////////////////////////////// Entity 1 ////////////////////////////////////
+     Entity* E1=new Entity();
+    ////// Mesh
+    meshes["house"] = std::make_unique<GAME::Mesh>();
+    //GAME::mesh_utils::Cuboid(*(meshes["cube"]));
+    GAME::mesh_utils::loadOBJ(*(meshes["house"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/House/House.obj");
+    ///// Material
+    Material* material = new Material();
+    pair<Texture2D*,Sampler2D*> pi;
+    pi.first = texture;
+    pi.second = sampler;
+    material->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
+    // Set Opaque 
+    RenderState* Rstate = new RenderState();
+    Rstate->Opaque = true; // 3ashan el tint akher haga feh b 1
+    material->setState(Rstate);
+    material->AddUniforms("albedo_map", pi);
+    glm::vec3 temp = {1.0f, 1.0f, 1.0f};
+    material->AddUniforms("albedo_tint",temp);
+    pi.first = texture1;
+    material->AddUniforms("specular_map",pi);
+    glm::vec3 temp2 = {0.0f, 1.0f, 0.0f};
+    material->AddUniforms("specular_tint" ,temp2);
+    pi.first = texture2;
+    material->AddUniforms("roughness_map",pi);
+    glm::vec2 temps = {0.0f, 1.0f};
+    material->AddUniforms("roughness_range",temps);
+    glm::vec3 temp1 = {0.02f, 0.0f, 0.0f};
+    pi.first = moon; 
+    material->AddUniforms("emissive_map",pi);
+    material->AddUniforms("emissive_tint",temp1);
+    material->setShader(&program);
+    //material->AddUniforms("tint", glm::vec4(1,1, 1, 1)); 
+    ////// MeshRanderer Component
+    Component* mesh=new MeshRenderer(0,material,&*(meshes["house"]));
+   /////// Transform Component
+    glm::vec3 pos={0,0,0};
     glm::vec3 rot={0,9,0};
-    glm::vec3 sc={10,10,10};
+    glm::vec3 sc={1,1,1};
     Component* transform=new TransformComponent(1,pos, rot, sc);
-
-     TransformComponent* TempTrans;
+    TransformComponent* TempTrans;
     TempTrans = dynamic_cast<TransformComponent*>(transform);
 
-    Entity* E1=new Entity();
+   ///// Adding Component
     E1->addComponent(mesh);
     E1->addComponent(transform);
- ///// Entity 2
- 
-     GAME::mesh_utils::Sphere(model1);
 
-    Component* mesh1 =new MeshRenderer(0,material1,&model1);
+ ////////////////////////////////////////// Entity 2 ////////////////////////////////////
+    Entity* E2=new Entity();
 
-    glm::vec3 pos1={5,10,5};
+     ////// Mesh
+    meshes["sphere"] = std::make_unique<GAME::Mesh>();
+    GAME::mesh_utils::Sphere(*(meshes["sphere"]), {64, 32}, false);
+    ////// MeshRanderer Component
+    Component* mesh1 =new MeshRenderer(0,material,&*(meshes["sphere"]));
+   /////// Transform Component
+    glm::vec3 pos1={-20,20,5};
     glm::vec3 rot1={0,9,0};
-    glm::vec3 sc1={1,1,1};
-
+    glm::vec3 sc1={10,10,10};
     Component* transform1 =new TransformComponent(1,pos1, rot1, sc1);
-
-    // sphere 
     TransformComponent* TempTransform;
     TempTransform = dynamic_cast<TransformComponent*>(transform1);
-    TempTransform->setParent(TempTrans);
+    //TempTransform->setParent(TempTrans); // set cube as parent for sphere
 
-
-    Entity* E2=new Entity();
+   ///// Adding Component
     E2->addComponent(mesh1);
     E2->addComponent(transform1);
 
     
 
-    ///////////////////////
-
+ ////////////////////////////////////////// Camera Component ////////////////////////////////////
+    Entity* camera=new Entity();
     glm::vec3 pos_cam={0,-1,0};
     glm::vec3 rot_c={0,0,0};
     glm::vec3 sc_cam={7,2,7};
     Component* transform_cam= new TransformComponent(1,pos_cam, rot_c, sc_cam);
     Component* cam_component= new CameraComponent(2);
     Component* cam_controller =new CameraController(3);
-
     CameraComponent* world_cam;
     world_cam = dynamic_cast<CameraComponent*>(cam_component);
-
     CameraController* world_camCont;
     world_camCont = dynamic_cast<CameraController*>(cam_controller);
-
     world_cam->setEyePosition({10, 10, 10});
     world_cam->setTarget({0, 0, 0});
     world_cam->setUp({0, 1, 0});
     world_cam->setupPerspective(glm::pi<float>() / 2, static_cast<float>(1280) / 720, 0.1f, 100.0f);
-
-        world_camCont->initialize(application, world_cam );
-
-    Entity* camera=new Entity();
+    world_camCont->initialize(application, world_cam );
     camera->addComponent(transform_cam); // 0
     camera->addComponent(cam_component); // 1
     camera->addComponent(cam_controller); // 2
 
+ //////////////////////////////////////////////////////////////////////////////////////////////////////
+        
 
-        World.push_back(camera);    // world[0]
-        World.push_back(E1);        // world[1]
-        World.push_back(E2);        // world[1]
 
-        glClearColor(0, 1, 0, 0);
+    //// Pushing Entities into world vector
+    World.push_back(camera);    // world[0]
+    World.push_back(E1);        // world[1]
+    World.push_back(E2);        // world[1]
+
+ //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        glClearColor(0, 0, 1, 0);
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
@@ -185,7 +259,7 @@ void PlayState::OnEnter()
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
 
-        glClearColor(1, 0, 0, 1);
+        glClearColor(0, 0, 1, 1);
 
 }
 void PlayState::OnDraw(double deltaTime)
@@ -229,8 +303,9 @@ void PlayState::OnExit()
    //  this->Sprogram->destroy();
   //  this->model->destroy();
     program.destroy();
-    model.destroy();
-    model1.destroy();
+    for(auto& [name, mesh]: meshes){
+            mesh->destroy();
+        }
     vector<Component*> comp;
     for (int i =0;i<World.size();i++)
     {

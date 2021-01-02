@@ -5,6 +5,9 @@
     
     
     struct RenderState {
+        
+        bool Opaque;
+        
         bool Enable_DepthTesting;
         GLenum depth_function;
 

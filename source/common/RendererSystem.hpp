@@ -11,8 +11,12 @@
 #include "Entity.h"
 
 using namespace std;
-
-class RendererSystem  {
+bool compare(const pair<Entity*,int> &a, const pair<Entity*,int> &b)
+{
+       return (a.second > b.second);
+}
+class RendererSystem 
+{
 private:
 
     vector<Entity*> Entities;
@@ -26,11 +30,13 @@ public:
     {
         this->worldEntity = world;
     }
+    
+ 
     void RenderAll(vector<Entity*> Ent,Entity* world,vector<Entity*> lights)
     {
-        vector<LightComponent*> ShaderLights;
-        vector<TransformComponent*> ShaderTransform;
+        //// Get Camera Component
           CameraComponent* cam;
+          TransformComponent * CameraTransform;
           vector<Component*> w = world->getComponents(); // camera
             for (int j =0;j< w.size();j++)
             {
@@ -38,13 +44,17 @@ public:
                 if (cam != NULL)
                     break;
             }
-        
-       // program.set("sky_light.top_color", sky_light.enabled ? sky_light.top_color : glm::vec3(0.0f));
-       /// program.set("sky_light.middle_color", sky_light.enabled ? sky_light.middle_color : glm::vec3(0.0f));
-      
-       /// program.set("sky_light.bottom_color", sky_light.enabled ? sky_light.bottom_color : glm::vec3(0.0f));
-        const int MAX_LIGHT_COUNT = 16;
+            for (int j =0;j< w.size();j++)
+            {
+                CameraTransform = dynamic_cast<TransformComponent*>(w[j]);
+                if (CameraTransform != NULL)
+                    break;
+            } 
 
+        /// Collecting light
+        const int MAX_LIGHT_COUNT = 16;
+         vector<LightComponent*> ShaderLights;
+        vector<TransformComponent*> ShaderTransform;
         for(const auto& light : lights) 
         {
             LightComponent* lightComp;
@@ -65,9 +75,14 @@ public:
             ShaderLights.push_back(lightComp);
             ShaderTransform.push_back(LightTransform);
         }     
+        ///////////////////////////////////////////////////////////
+        ////////// Sort  M
+        vector<pair<Entity*,int>> Opaque;
+        vector<pair<Entity*,int>> Transparent; 
         for (int i =1;i< Ent.size();i++)
         {
-            MeshRenderer* mesh;
+            // get mesh randerer component
+            MeshRenderer* meshT;
             TransformComponent* tranf;
             vector<Component*> m = Ent[i]->getComponents();
             for (int j =0;j< m.size();j++)
@@ -75,7 +90,44 @@ public:
                  tranf = dynamic_cast<TransformComponent*>(m[j]);
                 if (tranf != NULL)
                     break;
+            }        
+            for (int j =0;j< m.size();j++)
+            {
+                meshT = dynamic_cast<MeshRenderer*>(m[j]);
+                if (meshT != NULL)
+                    break;
             }
+            if (meshT !=NULL && tranf !=NULL)
+            {
+               RenderState* state = new RenderState();
+               state = meshT->getMaterial()->getState(); 
+                int distanceCT  = distance(tranf,CameraTransform); // calc distance
+               if (state->Opaque == true)
+               {
+                   Opaque.push_back(make_pair(Ent[i],distanceCT));
+               }
+               else
+               {
+                    Transparent.push_back(make_pair(Ent[i],distanceCT));       
+               }
+               
+            }
+        }
+        /// Sort transparent far -> near
+        sort(Transparent.begin(),Transparent.end(),compare);
+        Opaque.insert(Opaque.end(), Transparent.begin(), Transparent.end()); // merge 2 vectors
+        ///////////////////////////////////////////////////////////
+        for (int i =0;i< Opaque.size();i++)
+        {
+            MeshRenderer* mesh;
+            TransformComponent* tranf;
+            vector<Component*> m = Opaque[i].first->getComponents();
+            for (int j =0;j< m.size();j++)
+            {
+                 tranf = dynamic_cast<TransformComponent*>(m[j]);
+                if (tranf != NULL)
+                    break;
+            }        
             for (int j =0;j< m.size();j++)
             {
                 mesh = dynamic_cast<MeshRenderer*>(m[j]);
@@ -86,23 +138,24 @@ public:
             {
                 glUseProgram(*(mesh->getMaterial()->getShader())); 
 
+                int light_count = 0;
                  for (int j =0;j< ShaderTransform.size();j++)
                 {
                     if(!ShaderLights[j]->getEnable()) continue;
-                    std::string prefix = "lights[" + std::to_string(j) + "].";
+                    std::string prefix = "lights[" + std::to_string(light_count) + "].";
                     mesh->getMaterial()->getShader()->set(prefix + "type", static_cast<int>(ShaderLights[j]->getLightType()));
                     mesh->getMaterial()->getShader()->set(prefix + "color", ShaderLights[j]->getColor());
                     switch (ShaderLights[j]->getLightType()) {
-                    case LightType::DIRECTIONAL:
+                    case 0: // directional
                         mesh->getMaterial()->getShader()->set(prefix + "direction", glm::normalize(ShaderTransform[j]->getRotation()));
                         break;
-                    case LightType::POINT:
+                    case 1: // point
                         mesh->getMaterial()->getShader()->set(prefix + "position",ShaderTransform[j]->getPosition());
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_constant", ShaderLights[j]->getAttenuation().constant);
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_linear", ShaderLights[j]->getAttenuation().linear);
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_quadratic", ShaderLights[j]->getAttenuation().quadratic);
                         break;
-                    case LightType::SPOT:
+                    case 2: // spot
                         mesh->getMaterial()->getShader()->set(prefix + "position", ShaderTransform[j]->getPosition());
                         mesh->getMaterial()->getShader()->set(prefix + "direction", glm::normalize(ShaderTransform[j]->getRotation()));
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_constant", ShaderLights[j]->getAttenuation().constant);
@@ -112,20 +165,54 @@ public:
                         mesh->getMaterial()->getShader()->set(prefix + "outer_angle", ShaderLights[j]->getAngle().outer);
                         break;
                     }
+                    light_count++;
                     if(ShaderLights.size() >= MAX_LIGHT_COUNT) break;
                 }
 
                 int size = ShaderLights.size();
-                mesh->getMaterial()->getShader()->set("light_count",size );
+                mesh->getMaterial()->getShader()->set("light_count",light_count );
 
+                // send uniforms
                 mesh->getMaterial()->getShader()->set("camera_position", cam->getEyePosition());
                 mesh->getMaterial()->getShader()->set("view_projection", cam->getVPMatrix());
+                mesh->getMaterial()->getShader()->set("object_to_world", tranf->to_mat4());
+                mesh->getMaterial()->getShader()->set("object_to_world_inv_transpose", glm::inverse(tranf->to_mat4()), true);
+                
+            // glm::vec4 shadertint = std::any_cast<glm::vec4>( mesh->getMaterial()->getUniforms("tint"));
+     //     mesh->getMaterial()->getShader()->set("tint", shadertint);
+                
+                glm::vec3 s = std::any_cast<glm::vec3>( mesh->getMaterial()->getUniforms("albedo_tint"));
+                mesh->getMaterial()->getShader()->set("material.albedo_tint", s);
+                glm::vec3 s1 = std::any_cast<glm::vec3>( mesh->getMaterial()->getUniforms("specular_tint"));
+                mesh->getMaterial()->getShader()->set("material.specular_tint", s1);
+                glm::vec2 r = std::any_cast<glm::vec2>( mesh->getMaterial()->getUniforms("roughness_range"));
+                mesh->getMaterial()->getShader()->set("material.roughness_range", r);
+                glm::vec3 s2 = std::any_cast<glm::vec3>( mesh->getMaterial()->getUniforms("emissive_tint"));
+                mesh->getMaterial()->getShader()->set("material.emissive_tint", s2);
 
-               glm::vec4 s = std::any_cast<glm::vec4>( mesh->getMaterial()->getUniforms("tint"));
-               mesh->getMaterial()->getShader()->set("tint", s);
-
-                mesh->getMaterial()->getShader()->set("transform", cam->getVPMatrix() * tranf->to_mat4());
-                mesh->getMesh()->draw(); 
+                // send texture
+                pair<Texture2D*,Sampler2D*> pi = std::any_cast<pair<Texture2D*,Sampler2D*>>( mesh->getMaterial()->getUniforms("albedo_map"));
+                glActiveTexture(GL_TEXTURE0);
+                pi.first->bind();
+                mesh->getMaterial()->getShader()->set("material.albedo_map", 0);
+                
+                pi = std::any_cast<pair<Texture2D*,Sampler2D*>>( mesh->getMaterial()->getUniforms("specular_map"));
+                glActiveTexture(GL_TEXTURE1);
+                pi.first->bind();
+                mesh->getMaterial()->getShader()->set("material.specular_map", 1);
+                
+                pi = std::any_cast<pair<Texture2D*,Sampler2D*>>( mesh->getMaterial()->getUniforms("roughness_map"));
+                glActiveTexture(GL_TEXTURE2);
+                pi.first->bind();
+                mesh->getMaterial()->getShader()->set("material.roughness_map", 2);
+                
+                pi = std::any_cast<pair<Texture2D*,Sampler2D*>>( mesh->getMaterial()->getUniforms("emissive_map"));
+                glActiveTexture(GL_TEXTURE3);
+                pi.first->bind();
+                mesh->getMaterial()->getShader()->set("material.emissive_map", 3);
+            
+               //mesh->getMaterial()->getShader()->set("transform", cam->getVPMatrix() * tranf->to_mat4());
+               mesh->getMesh()->draw(); 
             }
 
 
@@ -134,6 +221,10 @@ public:
     }
 };
 
-                             //  mesh->getMaterial()->AddUniforms("tint", glm::vec4(1,1, 1, 1));
 
 #endif //GAME_MESH_H
+ // program.set("sky_light.top_color", sky_light.enabled ? sky_light.top_color : glm::vec3(0.0f));
+       /// program.set("sky_light.middle_color", sky_light.enabled ? sky_light.middle_color : glm::vec3(0.0f));
+      
+       /// program.set("sky_light.bottom_color", sky_light.enabled ? sky_light.bottom_color : glm::vec3(0.0f));
+         

@@ -26,16 +26,17 @@ struct Light {
     float inner_angle, outer_angle;
 };
 
-struct SkyLight {
-    vec3 top_color, middle_color, bottom_color;
-};
+//struct SkyLight {
+//    vec3 top_color, middle_color, bottom_color;
+//};
 
 #define MAX_LIGHT_COUNT 16
 
 uniform TexturedMaterial material;
 uniform Light lights[MAX_LIGHT_COUNT];
 uniform int light_count;
-uniform SkyLight sky_light;
+//uniform SkyLight sky_light;
+//uniform vec4 tint; // A tint is something we can use to modify colors
 
 out vec4 frag_color;
 
@@ -45,19 +46,19 @@ void main() {
     vec3 normal = normalize(fsin.normal);
     vec3 view = normalize(fsin.view);
 
-    vec3 ambient = sampled.ambient * (normal.y > 0 ?
-        mix(sky_light.middle_color, sky_light.top_color, normal.y) :
-        mix(sky_light.middle_color, sky_light.bottom_color, -normal.y));
+    //vec3 ambient = sampled.ambient; //* (normal.y > 0 ?
+      //  mix(sky_light.middle_color, sky_light.top_color, normal.y) :
+        //mix(sky_light.middle_color, sky_light.bottom_color, -normal.y));
 
-    vec3 accumulated_light = sampled.emissive + ambient;
+    vec3 accumulated_light = sampled.emissive + sampled.ambient;
 
     int count = min(light_count, MAX_LIGHT_COUNT);
     for(int index = 0; index < count; index++){
         Light light = lights[index];
         vec3 light_direction;
         float attenuation = 1;
-        if(light.type == TYPE_DIRECTIONAL)
-            light_direction = light.direction;
+        if(light.type == 0)
+           light_direction = light.direction;
         else {
             light_direction = fsin.world - light.position;
             float distance = length(light_direction);
@@ -67,7 +68,7 @@ void main() {
             light.attenuation_linear * distance +
             light.attenuation_quadratic * distance * distance);
 
-            if(light.type == TYPE_SPOT){
+            if(light.type == 2){
                 float angle = acos(dot(light.direction, light_direction));
                 attenuation *= smoothstep(light.outer_angle, light.inner_angle, angle);
             }

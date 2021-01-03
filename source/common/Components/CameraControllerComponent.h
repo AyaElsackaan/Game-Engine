@@ -31,12 +31,12 @@ class CameraController : public Component {
 
      public:
         CameraController( int ord);
-        void initialize(GAME::Application* application ,CameraComponent* cam);
+        void initialize(GAME::Application* application ,CameraComponent* cam,TransformComponent*t);
 
         void setDeltaTime(double del);
         void release();
 
-        void update(double delta_time);
+        void update(double delta_time,TransformComponent*t,CameraComponent* cam);
         [[nodiscard]] float getYaw() const;
         [[nodiscard]] float getPitch() const;
         [[nodiscard]] glm::vec3 getPosition() const;

@@ -11,7 +11,7 @@
 #include "../common/Sampler2D.h"
 struct SkyLight {
     bool enabled = true;
-    glm::vec3 top_color = {0,0,0}, middle_color{0,0,0}, bottom_color{0,0,0};
+    glm::vec3 top_color = {0,0,0.5}, middle_color{0,0,0.5}, bottom_color{0,0,0.5};
 };
 
 class PlayState : public State {

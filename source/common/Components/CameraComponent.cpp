@@ -86,6 +86,11 @@ void CameraComponent::setupOrthographic(float orthographic_height, float aspect_
                 this->direction = direction;
             }
         }
+        void CameraComponent::setFlags()
+        {
+            dirtyFlags |= V_DIRTY | VP_DIRTY;
+
+        }
         void CameraComponent::setTarget(glm::vec3 target){
             glm::vec3 direction = target - eye;
             if(this->direction != direction){
@@ -114,18 +119,18 @@ void CameraComponent::setupOrthographic(float orthographic_height, float aspect_
             return P;
         }
 
-        glm::mat4 CameraComponent::getViewMatrix()
+        glm::mat4 CameraComponent::getViewMatrix(TransformComponent*t)
         {
-            if(dirtyFlags & V_DIRTY){ // Only regenerate the view matrix if its flag is dirty
-                V = glm::lookAt(eye, eye + direction, up);
+            if(dirtyFlags & V_DIRTY){ // sOnly regenerate the view matrix if its flag is dirty
+                V = glm::lookAt(t->getPosition(), t->getPosition() + t->getRotation(), t->getScale());
                 dirtyFlags &= ~V_DIRTY; // V is no longer dirty
             }
             return V;
         }
 
-        glm::mat4 CameraComponent::getVPMatrix(){
+        glm::mat4 CameraComponent::getVPMatrix(TransformComponent*t){
             if(dirtyFlags & VP_DIRTY){
-                VP = getProjectionMatrix() * getViewMatrix();
+                VP = getProjectionMatrix() * getViewMatrix(t);
                 // Note that we called the functions getProjectionMatrix & getViewMatrix instead of directly using V & P
                 // to make sure that they are not outdated
                 dirtyFlags = 0; // Nothing is dirty anymore
@@ -146,41 +151,41 @@ void CameraComponent::setupOrthographic(float orthographic_height, float aspect_
         [[nodiscard]] glm::vec3 CameraComponent::getOriginalUp() const {return up;}
 
         // Get the directions of the camera coordinates in the world space
-        glm::vec3 CameraComponent::Right(){
-            getViewMatrix();
+        glm::vec3 CameraComponent::Right(TransformComponent*t){
+            getViewMatrix(t);
             return {V[0][0],V[1][0],V[2][0]};
         }
-        glm::vec3 CameraComponent::Left(){
-            getViewMatrix();
+        glm::vec3 CameraComponent::Left(TransformComponent*t){
+            getViewMatrix(t);
             return {-V[0][0],-V[1][0],-V[2][0]};
         }
-        glm::vec3 CameraComponent::Up(){
-            getViewMatrix();
+        glm::vec3 CameraComponent::Up(TransformComponent*t){
+            getViewMatrix(t);
             return {V[0][1],V[1][1],V[2][1]};
         }
-        glm::vec3 CameraComponent::Down(){
-            getViewMatrix();
+        glm::vec3 CameraComponent::Down(TransformComponent*t){
+            getViewMatrix(t);
             return {-V[0][1],-V[1][1],-V[2][1]};
         }
-        glm::vec3 CameraComponent::Forward(){
-            getViewMatrix();
+        glm::vec3 CameraComponent::Forward(TransformComponent*t){
+            getViewMatrix(t);
             return {-V[0][2],-V[1][2],-V[2][2]};
         }
-        glm::vec3 CameraComponent::Backward(){
-            getViewMatrix();
+        glm::vec3 CameraComponent::Backward(TransformComponent*t){
+            getViewMatrix(t);
             return {V[0][2],V[1][2],V[2][2]};
         }
 
         // Transform point from world space to normalized device coordinates
-        glm::vec3 CameraComponent::fromWorldToDeviceSpace(glm::vec3 world){
-            glm::vec4 clip = getVPMatrix() * glm::vec4(world, 1.0f);
+        glm::vec3 CameraComponent::fromWorldToDeviceSpace(glm::vec3 world,TransformComponent*t){
+            glm::vec4 clip = getVPMatrix(t) * glm::vec4(world, 1.0f);
             return glm::vec3(clip)/clip.w;
             // Note that we must divide by w. This is because of the projection matrix.
         }
 
         // Transform point from normalized device coordinates to world space
-        glm::vec3 CameraComponent::fromDeviceToWorldSpace(glm::vec3 device){
-            glm::vec4 clip = glm::inverse(getVPMatrix()) * glm::vec4(device, 1.0f);
+        glm::vec3 CameraComponent::fromDeviceToWorldSpace(glm::vec3 device,TransformComponent*t){
+            glm::vec4 clip = glm::inverse(getVPMatrix(t)) * glm::vec4(device, 1.0f);
             return glm::vec3(clip)/clip.w;
             // Note that we must divide by w even though we not going to the NDC space. This is because of the projection matrix.
         }

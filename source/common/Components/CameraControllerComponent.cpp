@@ -8,15 +8,15 @@ void CameraController:: setDeltaTime(double del)
     delta_time = del;
 }
 
-void CameraController::initialize(GAME::Application* application, CameraComponent* camera){
+void CameraController::initialize(GAME::Application* application, CameraComponent* camera,TransformComponent*t){
             this->app = application;
             this->camera = camera;
             yaw_sensitivity = pitch_sensitivity = 0.01f;
             position_sensitivity = {3.0f, 3.0f, 3.0f};
             fov_sensitivity = glm::pi<float>()/10;
 
-            position = camera->getEyePosition();
-            auto direction = camera->getDirection();
+            position = t->getPosition();
+            auto direction = t->getRotation() * glm::vec3{0,0,-1};
             yaw = glm::atan(-direction.z, direction.x);
             float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
             pitch = glm::atan(direction.y, base_length);
@@ -29,7 +29,7 @@ void CameraController::release(){
     }
 }
 
-void CameraController::update(double delta_time)
+void CameraController::update(double delta_time,TransformComponent* t,CameraComponent* cam)
 {
 
     if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked){
@@ -50,11 +50,11 @@ void CameraController::update(double delta_time)
     if(pitch >  glm::half_pi<float>() * 0.99f) pitch  = glm::half_pi<float>() * 0.99f;
     yaw = glm::wrapAngle(yaw);
 
-    float fov = camera->getVerticalFieldOfView() + app->getMouse().getScrollOffset().y * fov_sensitivity;
+    float fov = cam->getVerticalFieldOfView() + app->getMouse().getScrollOffset().y * fov_sensitivity;
     fov = glm::clamp(fov, glm::pi<float>() * 0.01f, glm::pi<float>() * 0.99f);
-    camera->setVerticalFieldOfView(fov);
+    cam->setVerticalFieldOfView(fov);
 
-    glm::vec3 front = camera->Forward(), up = camera->Up() , right = camera->Right();
+    glm::vec3 front = cam->Forward(t), up = cam->Up(t) , right = cam->Right(t);
 
     glm::vec3 current_sensitivity = this->position_sensitivity;
     if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) current_sensitivity *= speedup_factor;
@@ -66,8 +66,13 @@ void CameraController::update(double delta_time)
     if(app->getKeyboard().isPressed(GLFW_KEY_D)) position += right * ((float)delta_time * current_sensitivity.x);
     if(app->getKeyboard().isPressed(GLFW_KEY_A)) position -= right * ((float)delta_time * current_sensitivity.x);
 
-    camera->setDirection(glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
-    camera->setEyePosition(position);
+    glm::vec3 temp = glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0);
+    if ((t->getPosition() != position) || t->getRotation() != temp)
+    {
+        cam->setFlags();
+        t->setRotation(glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
+        t->setPosition(position);
+    }
     // set rotation 3ala tol
     //std::cout << yaw <<  " " << pitch << std::endl;
 
@@ -115,7 +120,7 @@ void CameraController::onDeleteState()
 
 void CameraController::onUpdate()
 {
-    this->update(delta_time);
+   // this->update(delta_time);
 }
 void CameraController::onDeleteApp() {
 

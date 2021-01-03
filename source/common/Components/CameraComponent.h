@@ -6,7 +6,7 @@
 #define GFX_LAB_CAMERACOMPONENT_H
 #include "Component.h"
 #include <glm/gtx/euler_angles.hpp>
-
+#include "TransformComponent.h"
 
 
     enum struct CameraType {
@@ -43,7 +43,7 @@
 
         // Setup the camera as an orthographic camera
         void setupOrthographic(float orthographic_height, float aspect_ratio, float near, float far);
-
+        void setFlags();
         void setType(CameraType _type);
         void setOrthographicSize(float orthographic_height);
         void setVerticalFieldOfView(float field_of_view_y);
@@ -55,8 +55,8 @@
         void setTarget(glm::vec3 target);
         void setUp(glm::vec3 up);
         glm::mat4 getProjectionMatrix();
-        glm::mat4 getViewMatrix();
-        glm::mat4 getVPMatrix();
+        glm::mat4 getViewMatrix(TransformComponent* t);
+        glm::mat4 getVPMatrix(TransformComponent* t);
         CameraType getType();
         [[nodiscard]] float getVerticalFieldOfView() const;
         [[nodiscard]] float getHorizontalFieldOfView() const ;
@@ -70,18 +70,18 @@
         [[nodiscard]] glm::vec3 getOriginalUp() const;
 
         // Get the directions of the camera coordinates in the world space
-        glm::vec3 Right();
-        glm::vec3 Left();
-        glm::vec3 Up();
-        glm::vec3 Down();
-        glm::vec3 Forward();
-        glm::vec3 Backward();
+        glm::vec3 Right(TransformComponent*t);
+        glm::vec3 Left(TransformComponent*t);
+        glm::vec3 Up(TransformComponent*t);
+        glm::vec3 Down(TransformComponent*t);
+        glm::vec3 Forward(TransformComponent*t);
+        glm::vec3 Backward(TransformComponent*t);
 
         // Transform point from world space to normalized device coordinates
-        glm::vec3 fromWorldToDeviceSpace(glm::vec3 world);
+        glm::vec3 fromWorldToDeviceSpace(glm::vec3 world,TransformComponent*t);
 
         // Transform point from normalized device coordinates to world space
-        glm::vec3 fromDeviceToWorldSpace(glm::vec3 device);
+        glm::vec3 fromDeviceToWorldSpace(glm::vec3 device,TransformComponent*t);
 
         void onStartApp() override ; //virtual/pure virtual>> to be modified
         void onStartState() override;

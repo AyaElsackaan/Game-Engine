@@ -193,8 +193,8 @@ public:
                 mesh->getMaterial()->getShader()->set("light_count",light_count );
 
                 /////////////////////////////// send material uniforms ////////////////////////////////////////////
-                mesh->getMaterial()->getShader()->set("camera_position", cam->getEyePosition());
-                mesh->getMaterial()->getShader()->set("view_projection", cam->getVPMatrix());
+                mesh->getMaterial()->getShader()->set("camera_position", CameraTransform->getPosition());
+                mesh->getMaterial()->getShader()->set("view_projection", cam->getVPMatrix(CameraTransform));
                 mesh->getMaterial()->getShader()->set("object_to_world", tranf->to_mat4());
                 mesh->getMaterial()->getShader()->set("object_to_world_inv_transpose", glm::inverse(tranf->to_mat4()), true);              
                 mesh->getMaterial()->getShader()->set("sky_light.top_color",  glm::vec3(0.0f));

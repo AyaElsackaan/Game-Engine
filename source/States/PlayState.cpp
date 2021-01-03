@@ -246,7 +246,7 @@ void PlayState::OnEnter()
     Component* mesh1 =new MeshRenderer(0,material1,&*(meshes["sphere"]));
    /////// Transform Component
     glm::vec3 pos1={10,0,0};
-    glm::vec3 rot1={0,9,0};
+    glm::vec3 rot1={0,0,0};
     glm::vec3 sc1={10,10,10};
     Component* transform1 =new TransformComponent(1,pos1, rot1, sc1);
     TransformComponent* TempTransform;
@@ -261,21 +261,28 @@ void PlayState::OnEnter()
 
  ////////////////////////////////////////// Camera Component ////////////////////////////////////
     Entity* camera=new Entity();
-    glm::vec3 pos_cam={0,-1,0};
-    glm::vec3 rot_c={0,0,0};
-    glm::vec3 sc_cam={7,2,7};
+    glm::vec3 pos_cam={10,10,18};
+    glm::vec3 rot_c={-25,-20,5};
+    glm::vec3 sc_cam={0,1,0};
+
     Component* transform_cam= new TransformComponent(1,pos_cam, rot_c, sc_cam);
     Component* cam_component= new CameraComponent(2);
     Component* cam_controller =new CameraController(3);
+
     CameraComponent* world_cam;
-    world_cam = dynamic_cast<CameraComponent*>(cam_component);
     CameraController* world_camCont;
+    TransformComponent* camTransform;
+
+    world_cam = dynamic_cast<CameraComponent*>(cam_component);
     world_camCont = dynamic_cast<CameraController*>(cam_controller);
-    world_cam->setEyePosition({10, 10, 10});
-    world_cam->setTarget({0, 0, 0});
-    world_cam->setUp({0, 1, 0});
+    camTransform = dynamic_cast<TransformComponent*>(transform_cam);
+
+    world_cam->setFlags();
+    //world_cam->setEyePosition({10, 10, 10});
+    //world_cam->setTarget({0, 0, 0});
+    //world_cam->setUp({0, 1, 0});
     world_cam->setupPerspective(glm::pi<float>() / 2, static_cast<float>(1280) / 720, 0.1f, 100.0f);
-    world_camCont->initialize(application, world_cam );
+    world_camCont->initialize(application, world_cam,camTransform);
     camera->addComponent(transform_cam); // 0
     camera->addComponent(cam_component); // 1
     camera->addComponent(cam_controller); // 2
@@ -295,31 +302,31 @@ void PlayState::OnEnter()
 
         glClearColor(0, 0, 1, 0);
 
-       // glEnable(GL_DEPTH_TEST);
-      //  glDepthFunc(GL_LEQUAL);
-      //  glEnable(GL_CULL_FACE);
-       // glCullFace(GL_BACK);
-       // glFrontFace(GL_CCW);
 
         glClearColor(0, 0, 1, 1);
 
 }
 void PlayState::OnDraw(double deltaTime)
 {
-   // glEnable(GL_BLEND);
-   // glBlendEquation(GL_FUNC_ADD);
-   // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     ///set delta time
     CameraController* cam_delta;
     CameraComponent* camSky;
+    TransformComponent* camTransform;
+
     vector<Component*> controller_setTime;
     controller_setTime = World[0]->getComponents();
     cam_delta = dynamic_cast<CameraController*>( controller_setTime[2]);
+    if (cam_delta == NULL)
+        std::cout << "Controller" << std::endl;
     camSky = dynamic_cast<CameraComponent*>( controller_setTime[1]);
- 
+    if (camSky == NULL)
+        std::cout << "Camera" << std::endl;
+    camTransform = dynamic_cast<TransformComponent*>(controller_setTime[0]);
+    if (camTransform == NULL)
+        std::cout << "Transform" << std::endl;
+
     cam_delta->setDeltaTime(deltaTime);
-    cam_delta->onUpdate();
+    cam_delta->update(deltaTime,camTransform,camSky);
 
     ///// on update for each entity
     TransformComponent* tc;
@@ -341,8 +348,8 @@ void PlayState::OnDraw(double deltaTime)
 
     glUseProgram(sky_program);
 
-    sky_program.set("view_projection", camSky->getVPMatrix());
-    sky_program.set("camera_position", camSky->getEyePosition());
+    sky_program.set("view_projection", camSky->getVPMatrix(camTransform));
+    sky_program.set("camera_position", camTransform->getPosition());
     sky_program.set("sky_light.top_color", sky_light.enabled ? sky_light.top_color : glm::vec3(1.0f));
     sky_program.set("sky_light.middle_color", sky_light.enabled ? sky_light.middle_color : glm::vec3(1.0f));
     sky_program.set("sky_light.bottom_color", sky_light.enabled ? sky_light.bottom_color : glm::vec3(1.0f));

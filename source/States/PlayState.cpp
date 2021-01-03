@@ -59,7 +59,7 @@ void PlayState::OnEnter()
     //////////////////////////////////////////////////////////////////
     ///// set light values Light Entities
                      //// spot light ////
-    glm::vec3 spotPos={0,1,4};
+    glm::vec3 spotPos={-4,1,2};
     glm::vec3 spotRot={0,0,-1};
     glm::vec3 spotScale={1,1,1};
     Component* Spottransform=new TransformComponent(1,spotPos, spotRot,spotScale);
@@ -174,7 +174,7 @@ void PlayState::OnEnter()
     ////// MeshRanderer Component
     Component* mesh=new MeshRenderer(0,material,&*(meshes["house"]));
    /////// Transform Component
-    glm::vec3 pos={-20,0,0};
+    glm::vec3 pos={0,0,0};
     glm::vec3 rot={0,9,0};
     glm::vec3 sc={1,1,1};
     Component* transform=new TransformComponent(1,pos, rot, sc);
@@ -203,7 +203,7 @@ void PlayState::OnEnter()
     else
     {
         rstate->Opaque = false; // 3ashan el tint akher haga feh b 1
-        rstate->Enable_DepthTesting = false;
+        rstate->Enable_DepthTesting = true;
     }
     rstate->depth_function = GL_LEQUAL;
     rstate->enable_transparent_depth_write = true;
@@ -245,7 +245,7 @@ void PlayState::OnEnter()
     ////// MeshRanderer Component
     Component* mesh1 =new MeshRenderer(0,material1,&*(meshes["sphere"]));
    /////// Transform Component
-    glm::vec3 pos1={-10,0,0};
+    glm::vec3 pos1={10,0,0};
     glm::vec3 rot1={0,9,0};
     glm::vec3 sc1={10,10,10};
     Component* transform1 =new TransformComponent(1,pos1, rot1, sc1);
@@ -364,6 +364,7 @@ void PlayState::OnExit()
    //  this->Sprogram->destroy();
   //  this->model->destroy();
     program.destroy();
+    sky_program.destroy();
     for(auto& [name, mesh]: meshes){
             mesh->destroy();
         }

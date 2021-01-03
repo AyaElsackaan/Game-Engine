@@ -68,6 +68,9 @@ void CameraController::update(double delta_time)
 
     camera->setDirection(glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
     camera->setEyePosition(position);
+    // set rotation 3ala tol
+    //std::cout << yaw <<  " " << pitch << std::endl;
+
 }
 
         [[nodiscard]] float CameraController::getYaw() const {return yaw;}

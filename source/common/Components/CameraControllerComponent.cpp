@@ -15,8 +15,8 @@ void CameraController::initialize(GAME::Application* application, CameraComponen
             position_sensitivity = {3.0f, 3.0f, 3.0f};
             fov_sensitivity = glm::pi<float>()/10;
 
-            position = t->getPosition();
-            auto direction = t->getRotation() * glm::vec3{0,0,-1};
+            position = (glm::vec3)(t->to_mat4() * glm::vec4{0,0,0,1});
+            auto direction = (glm::vec3)(t->to_mat4() * glm::vec4{0,0,-1,0});
             yaw = glm::atan(-direction.z, direction.x);
             float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
             pitch = glm::atan(direction.y, base_length);

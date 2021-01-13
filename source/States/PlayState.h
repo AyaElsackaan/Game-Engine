@@ -9,6 +9,8 @@
 #include <mesh/mesh.hpp>
 #include "../common/Texture2D.h"
 #include "../common/Sampler2D.h"
+#include "../gameLogic/playerSystem.h"
+
 struct SkyLight {
     bool enabled = true;
     glm::vec3 top_color = {0,0,0.5}, middle_color{0,0,0.5}, bottom_color{0,0,0.5};
@@ -16,7 +18,7 @@ struct SkyLight {
 
 class PlayState : public State {
 
-
+    playerSystem* player;
     vector <Entity*> World;
     vector <Entity*> lights;
     GAME::ShaderProgram program, sky_program;

@@ -54,18 +54,22 @@ glm::mat4 TransformComponent::to_mat4() const {
 void TransformComponent::setScale(glm::vec3 sc)
 {
     this->scale = sc;
+    this->to_mat4();
 }
 void TransformComponent::setPosition(glm::vec3 pos)
 {
     this->position = pos;
+    this->to_mat4();
 }
 void TransformComponent::setRotation(glm::vec3 rot)
 {
     this->rotation = rot;
+    this->to_mat4();
 }
 glm::vec3 TransformComponent::getRotation() const
 {
     return this->rotation;
+    
 }
 glm::vec3 TransformComponent::getPosition() const
 {

@@ -136,9 +136,12 @@ void PlayState::OnEnter()
         for(GLuint unit = 0; unit < 5; ++unit) sampler->bind(unit);
     
     
+
+    
     ///////////////////////////////////////////// character //////////////////////////////////////////////
      Entity* E1=new Entity();
     ////// Mesh
+    E1->setID(1);
     meshes["character"] = std::make_unique<GAME::Mesh>();
     GAME::mesh_utils::loadOBJ(*(meshes["character"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/char/among us.obj");
     ///// Material
@@ -210,8 +213,42 @@ void PlayState::OnEnter()
    ///// Adding Component
     E1->addComponent(mesh);
     E1->addComponent(transform);
+
+    player = new playerSystem(E1,application);
+
+    ////////////////////////////////////////// Camera Component ////////////////////////////////////
+    Entity* camera=new Entity();
+    glm::vec3 pos_cam={10,10,18};
+    glm::vec3 rot_c={-25,-20,5};
+    glm::vec3 sc_cam={0,1,0};
+
+    Component* transform_cam= new TransformComponent(1,pos_cam, rot_c, sc_cam);
+    Component* cam_component= new CameraComponent(2);
+    Component* cam_controller =new CameraController(3);
+
+    CameraComponent* world_cam;
+    CameraController* world_camCont;
+    TransformComponent* camTransform;
+
+    world_cam = dynamic_cast<CameraComponent*>(cam_component);
+    world_camCont = dynamic_cast<CameraController*>(cam_controller);
+    camTransform = dynamic_cast<TransformComponent*>(transform_cam);
+   // camTransform->setParent(TempTrans);
+    world_cam->setFlags();
+    //world_cam->setEyePosition({10, 10, 10});
+    //world_cam->setTarget({0, 0, 0});
+    //world_cam->setUp({0, 1, 0});
+    world_cam->setupPerspective(glm::pi<float>() / 2, static_cast<float>(1280) / 720, 0.1f, 100.0f);
+    world_camCont->initialize(application, world_cam,camTransform);
+    camera->addComponent(transform_cam); // 0
+    camera->addComponent(cam_component); // 1
+    camera->addComponent(cam_controller); // 2
+
+
+ //////////////////////////////////////////////////////////////////////////////////////////////////////
  ////////////////////////////////////////// mask ////////////////////////////////////
     Entity* E2=new Entity();
+    E2->setID(4);
     /// Set Material
     ///// Material
     Material* material1 = new Material();
@@ -286,7 +323,8 @@ void PlayState::OnEnter()
 
     ////////////////////////////////////////// bottle ////////////////////////////////////
 
-Entity* bottle=new Entity();
+    Entity* bottle=new Entity();
+    bottle->setID(3);
     /// Set Material
     ///// Material
     Material* bottlematerial = new Material();
@@ -362,6 +400,7 @@ Entity* bottle=new Entity();
     ////////////////////////////////////////// corona ////////////////////////////////////
 
 Entity* corona=new Entity();
+    corona->setID(2);
     /// Set Material
     ///// Material
     Material* coronamaterial = new Material();
@@ -426,8 +465,7 @@ Entity* corona=new Entity();
     Component* coronatransform =new TransformComponent(1,coronapos,coronarot, coronasc);
     TransformComponent* coronaTransform;
     coronaTransform = dynamic_cast<TransformComponent*>(coronatransform);
-    
-    //TempTransform->setParent(TempTrans); // set cube as parent for sphere
+  //  coronaTransform->setParent(TempTrans);
 
    ///// Adding Component
     corona->addComponent(coronamesh);
@@ -503,43 +541,14 @@ Entity* corona=new Entity();
     Component* roadtransform =new TransformComponent(1,roadpos,roadrot,roadsc);
     TransformComponent* roadTransform;
     roadTransform = dynamic_cast<TransformComponent*>(roadtransform);
-    
+   // roadTransform->setParent(camTransform);
     //TempTransform->setParent(TempTrans); // set cube as parent for sphere
 
    ///// Adding Component
     road->addComponent(roadmesh);
     road->addComponent(roadtransform);
 
- ////////////////////////////////////////// Camera Component ////////////////////////////////////
-    Entity* camera=new Entity();
-    glm::vec3 pos_cam={10,10,18};
-    glm::vec3 rot_c={-25,-20,5};
-    glm::vec3 sc_cam={0,1,0};
-
-    Component* transform_cam= new TransformComponent(1,pos_cam, rot_c, sc_cam);
-    Component* cam_component= new CameraComponent(2);
-    Component* cam_controller =new CameraController(3);
-
-    CameraComponent* world_cam;
-    CameraController* world_camCont;
-    TransformComponent* camTransform;
-
-    world_cam = dynamic_cast<CameraComponent*>(cam_component);
-    world_camCont = dynamic_cast<CameraController*>(cam_controller);
-    camTransform = dynamic_cast<TransformComponent*>(transform_cam);
-    //camTransform->setParent(TempTrans);
-    world_cam->setFlags();
-    //world_cam->setEyePosition({10, 10, 10});
-    //world_cam->setTarget({0, 0, 0});
-    //world_cam->setUp({0, 1, 0});
-    world_cam->setupPerspective(glm::pi<float>() / 2, static_cast<float>(1280) / 720, 0.1f, 100.0f);
-    world_camCont->initialize(application, world_cam,camTransform);
-    camera->addComponent(transform_cam); // 0
-    camera->addComponent(cam_component); // 1
-    camera->addComponent(cam_controller); // 2
-
-
- //////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
         
         meshes["cube"] = std::make_unique<GAME::Mesh>();
         GAME::mesh_utils::Cuboid(*(meshes["cube"]));
@@ -552,6 +561,14 @@ Entity* corona=new Entity();
     World.push_back(E2);        // world[3]
     World.push_back(bottle);
     World.push_back(corona);
+
+    player->addObject(camera);
+    player->addObject(E1);
+    player->addObject(E2);
+    player->addObject(road);
+    player->addObject(bottle);
+    player->addObject(corona);
+   
     
 
  //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -618,34 +635,10 @@ void PlayState::OnDraw(double deltaTime)
         glCullFace(GL_BACK);
 
 /////////////////////////////////////////////////////////////////////
-    vector<Component*> transformVector;
-    transformVector = World[2]->getComponents();
-    TransformComponent* characterTransform;
-    characterTransform = dynamic_cast<TransformComponent*>(transformVector[1]);
-    glm::vec3 position = characterTransform->getPosition();
-    glm::vec3 rot = characterTransform->getRotation();
-
-    if(application->getKeyboard().isPressed(GLFW_KEY_T)) position.z = position.z - 0.05 ;
-    if(application->getKeyboard().isPressed(GLFW_KEY_G)) position.z = position.z + 0.05 ;
-    if(application->getKeyboard().isPressed(GLFW_KEY_B)) rot.y = rot.y - 0.01; 
-    if(application->getKeyboard().isPressed(GLFW_KEY_V)) rot.y = rot.y + 0.01 ;
-
-    if(application->getKeyboard().isPressed(GLFW_KEY_Y))
-    {
-        position.z = position.z - 0.05 ;
-        position.x = position.x + 0.05 ;
-    }
-    if(application->getKeyboard().isPressed(GLFW_KEY_R)) 
-    {
-        position.z = position.z - 0.05 ;
-        position.x = position.x - 0.05 ;
-    }
-    if(application->getKeyboard().isPressed(GLFW_KEY_F)) position.x = position.x - 0.05 ;
-    if(application->getKeyboard().isPressed(GLFW_KEY_H)) position.x = position.x + 0.05 ;
-    characterTransform->setPosition(position);
-    characterTransform->setRotation(rot);
+    player->movePlayer();
+    // get el vector w ab3to ll render system
 /////////////////////////////////////////////////////////////////
-    renderEntities->RenderAll(World,World[0],lights);
+    renderEntities->RenderAll(player->getUpdatedVector(),World[0],lights);
 
     glClear(GL_DEPTH_BUFFER_BIT);
 

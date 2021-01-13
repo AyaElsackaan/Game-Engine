@@ -101,10 +101,7 @@ public:
             {
                RenderState* state = new RenderState();
                state = meshT->getMaterial()->getState(); 
-                int distanceCT  = distance(tranf,CameraTransform); // calc distance
-                // btgeb el far2 ben el pointers
-                // ngeb el position benhom w n "sub" n2s 3al length
-                //
+                double distanceCT  = distance(tranf->getPosition(),CameraTransform->getPosition());
                if (state->Opaque == true)
                {
                    Opaque.push_back(make_pair(Ent[i],distanceCT));
@@ -170,20 +167,24 @@ public:
                     std::string prefix = "lights[" + std::to_string(light_count) + "].";
                     mesh->getMaterial()->getShader()->set(prefix + "type", static_cast<int>(ShaderLights[j]->getLightType()));
                     mesh->getMaterial()->getShader()->set(prefix + "color", ShaderLights[j]->getColor());
+                    glm::vec3 direction = (ShaderTransform[j]->to_mat4() * glm::vec4 {0,0,-1,0});
+                    glm::vec3 position = ShaderTransform[j]->to_mat4() * glm::vec4 {0,0,0,1};
                     switch (ShaderLights[j]->getLightType()) {
                     case 0: // directional
-                        mesh->getMaterial()->getShader()->set(prefix + "direction", glm::normalize(ShaderTransform[j]->getRotation()));
+                        mesh->getMaterial()->getShader()->set(prefix + "direction", glm::normalize(direction));
                          // Rotation -> "model matrix" x Pos:{0,0,0,1}, up{0,1,0,0} ,dir:{0,0,-1,0}
+
                         break;
                     case 1: // point
-                        mesh->getMaterial()->getShader()->set(prefix + "position",ShaderTransform[j]->getPosition());
+                        mesh->getMaterial()->getShader()->set(prefix + "position",position);
+                        
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_constant", ShaderLights[j]->getAttenuation().constant);
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_linear", ShaderLights[j]->getAttenuation().linear);
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_quadratic", ShaderLights[j]->getAttenuation().quadratic);
                         break;
                     case 2: // spot
-                        mesh->getMaterial()->getShader()->set(prefix + "position", ShaderTransform[j]->getPosition());
-                        mesh->getMaterial()->getShader()->set(prefix + "direction", glm::normalize(ShaderTransform[j]->getRotation()));
+                        mesh->getMaterial()->getShader()->set(prefix + "position", position);
+                        mesh->getMaterial()->getShader()->set(prefix + "direction", glm::normalize(direction));
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_constant", ShaderLights[j]->getAttenuation().constant);
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_linear",ShaderLights[j]->getAttenuation().linear);
                         mesh->getMaterial()->getShader()->set(prefix + "attenuation_quadratic", ShaderLights[j]->getAttenuation().quadratic);

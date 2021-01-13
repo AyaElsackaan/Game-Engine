@@ -25,6 +25,6 @@ void main() {
     vsout.view = camera_position - vsout.world;
     vsout.normal = normalize((object_to_world_inv_transpose * vec4(normal, 0.0f)).xyz);
     gl_Position = view_projection * vec4(vsout.world, 1.0);
-    vsout.color = vec4(color.xyz,alpha);
+    vsout.color = vec4(color.xyz,alpha); // 
     vsout.tex_coord = tex_coord;
 }

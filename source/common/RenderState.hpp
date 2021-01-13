@@ -2,12 +2,11 @@
 #include <map>
 #include <any>
 #include <shader.hpp>
-    
-    
+     
     struct RenderState {
         
         bool Opaque;
-        
+        // a check bl enable blending
         bool Enable_DepthTesting;
         GLenum depth_function;
 
@@ -24,6 +23,7 @@
         bool enable_transparent_depth_write;
         GLenum front_face_winding;
 
+        /// msh mehtagenhaa hena ->
         bool enable_alpha_test;
         float alpha_test_threshold;
         bool enable_alpha_to_coverage;

@@ -102,6 +102,9 @@ public:
                RenderState* state = new RenderState();
                state = meshT->getMaterial()->getState(); 
                 int distanceCT  = distance(tranf,CameraTransform); // calc distance
+                // btgeb el far2 ben el pointers
+                // ngeb el position benhom w n "sub" n2s 3al length
+                //
                if (state->Opaque == true)
                {
                    Opaque.push_back(make_pair(Ent[i],distanceCT));
@@ -141,18 +144,20 @@ public:
             
            RenderState* Rstate;
            Rstate = mesh->getMaterial()->getState();
+           
            if(Rstate->Enable_DepthTesting) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
            glDepthFunc(Rstate->depth_function);
            if(Rstate->Enable_Culling) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
            glCullFace(Rstate->culled_face);
            glFrontFace(Rstate->front_face_winding);
-             glEnable(GL_BLEND);
+            glEnable(GL_BLEND);
             glBlendEquation(Rstate->blend_equation);
             glBlendFunc(Rstate->blend_source_function, Rstate->blend_destination_function);
            //glBlendColor(Rstate->blend_constant_color.r, Rstate->blend_constant_color.g, Rstate->blend_constant_color.b, Rstate->blend_constant_color.a);
 
            if(Rstate->enable_alpha_to_coverage) glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
             else glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);       
+           
             glUseProgram(*(mesh->getMaterial()->getShader())); 
 
             float shaderalpha = std::any_cast<float>( mesh->getMaterial()->getUniforms("alpha"));
@@ -168,6 +173,7 @@ public:
                     switch (ShaderLights[j]->getLightType()) {
                     case 0: // directional
                         mesh->getMaterial()->getShader()->set(prefix + "direction", glm::normalize(ShaderTransform[j]->getRotation()));
+                         // Rotation -> "model matrix" x Pos:{0,0,0,1}, up{0,1,0,0} ,dir:{0,0,-1,0}
                         break;
                     case 1: // point
                         mesh->getMaterial()->getShader()->set(prefix + "position",ShaderTransform[j]->getPosition());

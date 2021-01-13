@@ -20,7 +20,7 @@ class Sampler2D {
      Sampler2D();
      void bind(int unit );
      ~Sampler2D();
-
+     // Setters w  getters -> setters btghayr el values 
      Sampler2D(Sampler2D const &) = delete;
      Sampler2D &operator=(Sampler2D const &) = delete;
     };

@@ -37,10 +37,20 @@ void playerSystem::checkCollision(TransformComponent* p)
            double distanceS = distance(transfCorona->getPosition(),p->getPosition());
            if (distanceS <= 8)
            {
-               if (health >0)
-                     health -= 10;
-                cout << health <<endl;
-                AllEntities.erase(AllEntities.begin() + i);
+               if (health > 0)
+               {
+                    health -= 10;
+                    cout << health <<endl;
+               }
+
+                TransformComponent* coronaTransform;
+                for (int j=0;j<AllEntities[i]->getComponents().size() ;j++)
+                {
+                    coronaTransform = dynamic_cast<TransformComponent*>(AllEntities[i]->getComponents()[j]);
+                    if (coronaTransform != NULL)
+                    break;
+                }
+                coronaTransform->setPosition(glm::vec3{0,0,0});
            }
        }
        else if (AllEntities[i]->getID() == 3)
@@ -48,11 +58,20 @@ void playerSystem::checkCollision(TransformComponent* p)
            double distanceS = distance(transfCorona->getPosition(),p->getPosition());
            if (distanceS <= 2)
            {
-             if (health < 100)
-                health += 5;
+                if (health < 100)
+                    health += 5;
                 cout << health<<endl;
-                AllEntities.erase(AllEntities.begin() + i);
-           }
+
+                TransformComponent* coronaTransform;
+                for (int j=0;j<AllEntities[i]->getComponents().size() ;j++)
+                {
+                    coronaTransform = dynamic_cast<TransformComponent*>(AllEntities[i]->getComponents()[j]);
+                    if (coronaTransform != NULL)
+                    break;
+                }
+                coronaTransform->setPosition(glm::vec3{0,0,0}) ;          
+            }
+
        }
    }
     
@@ -66,27 +85,21 @@ void  playerSystem::movePlayer()
 
     glm::vec3 position = characterTransform->getPosition();
     glm::vec3 rot = characterTransform->getRotation();
-        position.z = position.z - 0.3 ;
+
+        position.z = position.z - 2 ;
     if(application->getKeyboard().isPressed(GLFW_KEY_F)) 
     {
-        if (position.x > -8 )
+        if (position.x > -10 )
             position.x = position.x - 0.5;
     } 
     if(application->getKeyboard().isPressed(GLFW_KEY_H))
     { 
-        if (position.x < 8)
-            position.x = position.x + 0.5 ;
+        if (position.x < 10)
+            position.x = position.x + 0.5;
     }
 
     characterTransform->setPosition(position);
 
-    vector<Component*> cameraVector;
-    cameraVector = AllEntities[0]->getComponents();
-    TransformComponent* cameraTransform;
-    CameraComponent* camComp;
-    cameraTransform = dynamic_cast<TransformComponent*>(cameraVector[0]);
-    camComp = dynamic_cast<CameraComponent*>(cameraVector[1]);
-    cameraTransform->to_mat4();
     checkCollision(characterTransform);
 }
 int playerSystem::getHealth()
@@ -104,42 +117,56 @@ vector<Entity*> playerSystem::getUpdatedVector()
 }
 
 /////////////////////////////////////////////////////////
-   /*
-        get trnaform ll corona , among us /
-        do{
-            int rand = rand() % 15;
-        }while(rand < 5);
-
-        corona.z -> character.z + rand
-        corona.x = char.x
-        corona.y = char.y 
-        push All Entities
-    */
-void  playerSystem::generateCorona(Entity* corona)
+void playerSystem::addCorona(Entity* c)
 {
-    TransformComponent* coronaTransform;
-    for (int i=0;i<corona->getComponents().size() ;i++)
-    {
-        coronaTransform = dynamic_cast<TransformComponent*>(corona->getComponents()[i]);
-        if (coronaTransform != NULL)
-         break;
-    }
-    //////////////////////////
-    vector<Component*> transformVector;
-    transformVector = playerEntity->getComponents();
-    TransformComponent* characterTransform;
-    characterTransform = dynamic_cast<TransformComponent*>(transformVector[1]);
+    CoronaS.push_back(c);
+    AllEntities.push_back(c);
+}
+void  playerSystem::generateCorona()
+{
+        for(int i =0;i<AllEntities.size();i++)
+        {
+            if (AllEntities[i]->getID() == 2)
+            {
+                TransformComponent* coronaTransform;
+                for (int j=0;j<AllEntities[i]->getComponents().size() ;j++)
+                {
+                    coronaTransform = dynamic_cast<TransformComponent*>(AllEntities[i]->getComponents()[j]);
+                    if (coronaTransform != NULL)
+                    break;
+                }
+                //////////////////////////
+                vector<Component*> transformVector;
+                transformVector = playerEntity->getComponents();
+                TransformComponent* characterTransform;
+                characterTransform = dynamic_cast<TransformComponent*>(transformVector[1]);
 
-    int random;
-    do{
-            random = std::rand() % 50;
-    }while(random < 20);
-    glm::vec3 position;
-    position.z = characterTransform->getPosition().z - random;
-    position.y = characterTransform->getPosition().y;
-    position.x = characterTransform->getPosition().x;
+                int random;
+                do{
+                        random = std::rand() % 80;
+                }while(random < 40);
 
-    coronaTransform->setPosition(position);
+                  int  randomx = std::rand() % 10;
+                  int  randSign = std::rand() % 10;
 
-    AllEntities.push_back(corona);
+                glm::vec3 position;
+                position.z = characterTransform->getPosition().z - random;
+                position.y = characterTransform->getPosition().y + 5;
+                if (randSign <5)
+                    position.x = characterTransform->getPosition().x - randomx;
+                else if (randSign >= 5)
+                    position.x = characterTransform->getPosition().x + randomx;
+                int randomscale;
+
+                do{
+                     randomscale = std::rand() % 4;
+                 } while (randomscale == 0);
+
+                coronaTransform->setScale(glm::vec3{3*randomscale,3*randomscale,3*randomscale});
+
+
+                coronaTransform->setPosition(position);
+            }
+        }
+    
 }

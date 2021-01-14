@@ -13,7 +13,6 @@
 #include "../common/Material.hpp"
 
 #include <json/json.hpp>
-
 #include <fstream>
 #include <algorithm>
 #include <cctype>
@@ -245,6 +244,9 @@ void PlayState::OnEnter()
     camera->addComponent(cam_component); // 1
     camera->addComponent(cam_controller); // 2
 
+      player->addObject(camera);
+
+
     ////////////////////////////////////////// bottle ////////////////////////////////////
 
     Entity* bottle=new Entity();
@@ -322,78 +324,84 @@ void PlayState::OnEnter()
 
 
     ////////////////////////////////////////// corona ////////////////////////////////////
-
-    Entity* corona=new Entity();
-    corona->setID(2);
-    /// Set Material
-    ///// Material
-    Material* coronamaterial = new Material();
-    
-    alpha = 1;
-
-   /// Set RenderState
-    RenderState* coronastate = new RenderState();
-    if (alpha == 1)
+    for (int i =0; i<1 ;i++)
     {
-        coronastate->Opaque = true; // 3ashan el tint akher haga feh b 1
-        coronastate->Enable_DepthTesting = true;
-    }
-    else
-    {
-        coronastate->Opaque = false; // 3ashan el tint akher haga feh b 1
-        coronastate->Enable_DepthTesting = true;
-    }
-    coronastate->depth_function = GL_LEQUAL;
-    coronastate->enable_transparent_depth_write = true;
-    coronastate->Enable_Culling = true;
-    coronastate->culled_face = GL_BACK;
+        Entity* corona=new Entity();
+        corona->setID(2);
+        /// Set Material
+        ///// Material
+        Material* coronamaterial = new Material();
+        
+        alpha = 1;
 
-    coronastate->front_face_winding = GL_CCW;
-    coronastate->Enable_Blending = true;
-    coronastate->blend_equation = GL_FUNC_ADD;
-    coronastate->blend_source_function = GL_SRC_ALPHA;
-    coronastate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
-    coronastate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
-    coronastate->enable_alpha_to_coverage = false;
-    coronastate->enable_alpha_test = false;
-    coronastate->alpha_test_threshold = 0.5;
-    
-    coronamaterial->setState(coronastate);
-    ///
-    coronamaterial->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
-    coronamaterial->AddUniforms("alpha",alpha);
-    //pair<Texture2D*,Sampler2D*> pi;
-    pi.first = texturecorona;
-    pi.second = sampler;
-    coronamaterial->AddUniforms("albedo_map", pi);
-    coronamaterial->AddUniforms("albedo_tint",temp);
-    pi.first = texturecorona1;
-    coronamaterial->AddUniforms("specular_map",pi);
-    coronamaterial->AddUniforms("specular_tint" ,temp2);
-    pi.first = texturecorona2;
-    coronamaterial->AddUniforms("roughness_map",pi);
-    coronamaterial->AddUniforms("roughness_range",temps);
-    pi.first = moon; 
-    coronamaterial->AddUniforms("emissive_map",pi);
-    coronamaterial->AddUniforms("emissive_tint",temp1);
-    coronamaterial->setShader(&program);
-     ////// Mesh
-    meshes["corona"] = std::make_unique<GAME::Mesh>();
-   GAME::mesh_utils::loadOBJ(*(meshes["corona"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/corona/corona_virus.obj");
-    ////// MeshRanderer Component
-    Component* coronamesh =new MeshRenderer(0,coronamaterial,&*(meshes["corona"]));
-   /////// Transform Component
-    glm::vec3 coronapos={20,5,0};
-    glm::vec3 coronarot={0,0,0};
-    glm::vec3 coronasc={2,2,2};
-    Component* coronatransform =new TransformComponent(1,coronapos,coronarot, coronasc,NULL);
-    TransformComponent* coronaTransform;
-    coronaTransform = dynamic_cast<TransformComponent*>(coronatransform);
-  //  coronaTransform->setParent(TempTrans);
+    /// Set RenderState
+        RenderState* coronastate = new RenderState();
+        if (alpha == 1)
+        {
+            coronastate->Opaque = true; // 3ashan el tint akher haga feh b 1
+            coronastate->Enable_DepthTesting = true;
+        }
+        else
+        {
+            coronastate->Opaque = false; // 3ashan el tint akher haga feh b 1
+            coronastate->Enable_DepthTesting = true;
+        }
+        coronastate->depth_function = GL_LEQUAL;
+        coronastate->enable_transparent_depth_write = true;
+        coronastate->Enable_Culling = true;
+        coronastate->culled_face = GL_BACK;
 
-   ///// Adding Component
-    corona->addComponent(coronamesh);
-    corona->addComponent(coronatransform);
+        coronastate->front_face_winding = GL_CCW;
+        coronastate->Enable_Blending = true;
+        coronastate->blend_equation = GL_FUNC_ADD;
+        coronastate->blend_source_function = GL_SRC_ALPHA;
+        coronastate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
+        coronastate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
+        coronastate->enable_alpha_to_coverage = false;
+        coronastate->enable_alpha_test = false;
+        coronastate->alpha_test_threshold = 0.5;
+        
+        coronamaterial->setState(coronastate);
+        ///
+        coronamaterial->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
+        coronamaterial->AddUniforms("alpha",alpha);
+        //pair<Texture2D*,Sampler2D*> pi;
+        pi.first = texturecorona;
+        pi.second = sampler;
+        coronamaterial->AddUniforms("albedo_map", pi);
+        coronamaterial->AddUniforms("albedo_tint",temp);
+        pi.first = texturecorona1;
+        coronamaterial->AddUniforms("specular_map",pi);
+        coronamaterial->AddUniforms("specular_tint" ,temp2);
+        pi.first = texturecorona2;
+        coronamaterial->AddUniforms("roughness_map",pi);
+        coronamaterial->AddUniforms("roughness_range",temps);
+        pi.first = moon; 
+        coronamaterial->AddUniforms("emissive_map",pi);
+        coronamaterial->AddUniforms("emissive_tint",temp1);
+        coronamaterial->setShader(&program);
+        ////// Mesh
+        meshes["corona" + std::to_string(i)] = std::make_unique<GAME::Mesh>();
+       // GAME::mesh_utils::loadOBJ(*(meshes["corona" + std::to_string(i)]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/corona/corona_virus.obj");
+        GAME::mesh_utils::Sphere(*(meshes["corona" + std::to_string(i)]), {64, 32}, false);
+        ////// MeshRanderer Component
+        Component* coronamesh =new MeshRenderer(0,coronamaterial,&*(meshes["corona"+ std::to_string(i)]));
+    /////// Transform Component
+        glm::vec3 coronapos={20,5,0};
+        glm::vec3 coronarot={0,0,0};
+        glm::vec3 coronasc={3,3,3};
+        Component* coronatransform =new TransformComponent(1,coronapos,coronarot, coronasc,NULL);
+        TransformComponent* coronaTransform;
+        coronaTransform = dynamic_cast<TransformComponent*>(coronatransform);
+    //  coronaTransform->setParent(TempTrans);
+
+    ///// Adding Component
+        corona->addComponent(coronamesh);
+        corona->addComponent(coronatransform);
+
+        player->addCorona(corona);
+
+    }
     ////////////////////////////////////////// road ////////////////////////////////////
 
     Entity* road=new Entity();
@@ -459,7 +467,7 @@ void PlayState::OnEnter()
    /////// Transform Component
     glm::vec3 roadpos={0,0,0};
     glm::vec3 roadrot={0,0,0};
-    glm::vec3 roadsc={100,10,200};
+    glm::vec3 roadsc={10,10,2000};
     Component* roadtransform =new TransformComponent(1,roadpos,roadrot,roadsc,NULL);
     TransformComponent* roadTransform;
     roadTransform = dynamic_cast<TransformComponent*>(roadtransform);
@@ -482,14 +490,14 @@ void PlayState::OnEnter()
     World.push_back(E1);        // world[2]
     //World.push_back(E2);        // world[3]
     World.push_back(bottle);
-    World.push_back(corona);
+  //  World.push_back(corona);
 
-    player->addObject(camera);
+  //  player->addObject(camera);
     player->addObject(E1);
    // player->addObject(E2);
     player->addObject(road);
     player->addObject(bottle);
-    player->addObject(corona);
+  //  player->addObject(corona);
    
     
 
@@ -562,7 +570,7 @@ void PlayState::OnDraw(double deltaTime)
     generateTimer++;
     if (generateTimer > counter)
     {
-        player->generateCorona((World[4]));
+        player->generateCorona();
         counter = counter +180;
     }
     // get el vector w ab3to ll render system

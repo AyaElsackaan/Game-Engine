@@ -18,7 +18,8 @@ class playerSystem {
         int health;
         GAME::Application* application;
         vector<Entity*> AllEntities;  // coronas + powerups
-
+        vector<Entity*> CoronaS;
+      //  Entity* road;
       //  Entity corona;
 
         double delta_time;
@@ -32,9 +33,10 @@ class playerSystem {
       int getHealth();
       void addObject(Entity* obj);
       vector<Entity*> getUpdatedVector();
-    //  void setCorona(Entity c);
+
+     void addCorona(Entity* c);
     //////////generate ////////
-    void generateCorona(Entity* corona);
+    void generateCorona();
 
       
 

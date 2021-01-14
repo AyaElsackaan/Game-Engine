@@ -62,7 +62,7 @@ void PlayState::OnEnter()
     glm::vec3 spotPos={-4,1,2};
     glm::vec3 spotRot={0,0,-1};
     glm::vec3 spotScale={1,1,1};
-    Component* Spottransform=new TransformComponent(1,spotPos, spotRot,spotScale);
+    Component* Spottransform=new TransformComponent(1,spotPos, spotRot,spotScale,NULL);
     TransformComponent* SpotTrans;
     SpotTrans = dynamic_cast<TransformComponent*>(Spottransform);
     spot_angle s;
@@ -79,7 +79,7 @@ void PlayState::OnEnter()
      glm::vec3 DirPos={1,1,4};
     glm::vec3 DirRot={-1,-1,-1};
     glm::vec3 DirScale={1,1,1};
-    Component* Dirtransform=new TransformComponent(1,DirPos, DirRot,DirScale);
+    Component* Dirtransform=new TransformComponent(1,DirPos, DirRot,DirScale,NULL);
     TransformComponent* DirTrans;
     DirTrans = dynamic_cast<TransformComponent*>(Dirtransform);
     Component* DirL=new LightComponent(1,LightType::DIRECTIONAL,true,s,{1.0f, 1.0f, 1.0f},{0.0f, 0.0f, 1.0f});
@@ -202,10 +202,10 @@ void PlayState::OnEnter()
     ////// MeshRanderer Component
     Component* mesh=new MeshRenderer(0,material,&*(meshes["character"]));
    /////// Transform Component
-    glm::vec3 pos={0,0,0};
+    glm::vec3 pos={0,1,0};
     glm::vec3 rot={0,9,0};
     glm::vec3 sc={0.05,0.05,0.05};
-    Component* transform=new TransformComponent(1,pos, rot, sc);
+    Component* transform=new TransformComponent(1,pos, rot, sc,NULL);
     TransformComponent* TempTrans;
     TempTrans = dynamic_cast<TransformComponent*>(transform);
    // TempTrans->setParent(camTransform);
@@ -218,11 +218,12 @@ void PlayState::OnEnter()
 
     ////////////////////////////////////////// Camera Component ////////////////////////////////////
     Entity* camera=new Entity();
-    glm::vec3 pos_cam={10,10,18};
-    glm::vec3 rot_c={-25,-20,5};
+    camera->setID(5);
+    glm::vec3 pos_cam={3000,7000,5000};
+    glm::vec3 rot_c={1000,0,0};
     glm::vec3 sc_cam={0,1,0};
 
-    Component* transform_cam= new TransformComponent(1,pos_cam, rot_c, sc_cam);
+    Component* transform_cam= new TransformComponent(1,pos_cam, rot_c, sc_cam,TempTrans);
     Component* cam_component= new CameraComponent(2);
     Component* cam_controller =new CameraController(3);
 
@@ -243,83 +244,6 @@ void PlayState::OnEnter()
     camera->addComponent(transform_cam); // 0
     camera->addComponent(cam_component); // 1
     camera->addComponent(cam_controller); // 2
-
-
- //////////////////////////////////////////////////////////////////////////////////////////////////////
- ////////////////////////////////////////// mask ////////////////////////////////////
-    Entity* E2=new Entity();
-    E2->setID(4);
-    /// Set Material
-    ///// Material
-    Material* material1 = new Material();
-    
-    alpha = 1;
-
-   /// Set RenderState
-    RenderState* rstate = new RenderState();
-    if (alpha == 1)
-    {
-        rstate->Opaque = true; // 3ashan el tint akher haga feh b 1
-        rstate->Enable_DepthTesting = true;
-    }
-    else
-    {
-        rstate->Opaque = false; // 3ashan el tint akher haga feh b 1
-        rstate->Enable_DepthTesting = true;
-    }
-    rstate->depth_function = GL_LEQUAL;
-    rstate->enable_transparent_depth_write = true;
-    rstate->Enable_Culling = true;
-    rstate->culled_face = GL_BACK;
-
-    rstate->front_face_winding = GL_CCW;
-    rstate->Enable_Blending = true;
-    rstate->blend_equation = GL_FUNC_ADD;
-    rstate->blend_source_function = GL_SRC_ALPHA;
-    rstate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
-    rstate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
-    rstate->enable_alpha_to_coverage = false;
-    rstate->enable_alpha_test = false;
-    rstate->alpha_test_threshold = 0.5;
-    
-    material1->setState(rstate);
-    ///
-    material1->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
-    material1->AddUniforms("alpha",alpha);
-    //pair<Texture2D*,Sampler2D*> pi;
-    pi.first = texturem0;
-    pi.second = sampler;
-    material1->AddUniforms("albedo_map", pi);
-    material1->AddUniforms("albedo_tint",temp);
-    pi.first = texturem1;
-    material1->AddUniforms("specular_map",pi);
-    material1->AddUniforms("specular_tint" ,temp2);
-    pi.first = texturem2;
-    material1->AddUniforms("roughness_map",pi);
-    material1->AddUniforms("roughness_range",temps);
-    pi.first = moon; 
-    material1->AddUniforms("emissive_map",pi);
-    material1->AddUniforms("emissive_tint",temp1);
-    material1->setShader(&program);
-     ////// Mesh
-    meshes["mask"] = std::make_unique<GAME::Mesh>();
-   GAME::mesh_utils::loadOBJ(*(meshes["mask"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/mask/mask.obj");
-  //  GAME::mesh_utils::Sphere(*(meshes["sphere"]), {64, 32}, false);
-    ////// MeshRanderer Component
-    Component* mesh1 =new MeshRenderer(0,material1,&*(meshes["mask"]));
-   /////// Transform Component
-    glm::vec3 pos1={-15,0,0};
-    glm::vec3 rot1={0,0,0};
-    glm::vec3 sc1={2,2,2};
-    Component* transform1 =new TransformComponent(1,pos1, rot1, sc1);
-    TransformComponent* TempTransform;
-    TempTransform = dynamic_cast<TransformComponent*>(transform1);
-    
-    //TempTransform->setParent(TempTrans); // set cube as parent for sphere
-
-   ///// Adding Component
-    E2->addComponent(mesh1);
-    E2->addComponent(transform1);
 
     ////////////////////////////////////////// bottle ////////////////////////////////////
 
@@ -358,7 +282,7 @@ void PlayState::OnEnter()
     bottlestate->enable_alpha_test = false;
     bottlestate->alpha_test_threshold = 0.5;
     
-    bottlematerial->setState(rstate);
+    bottlematerial->setState(bottlestate);
     ///
     bottlematerial->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
     bottlematerial->AddUniforms("alpha",alpha);
@@ -386,7 +310,7 @@ void PlayState::OnEnter()
     glm::vec3 bottlepos={5,0,0};
     glm::vec3 bottlerot={350,5,0};
     glm::vec3 bottlesc={0.2,0.2,0.2};
-    Component* bottletransform =new TransformComponent(1,bottlepos,bottlerot, bottlesc);
+    Component* bottletransform =new TransformComponent(1,bottlepos,bottlerot, bottlesc,NULL);
     TransformComponent* bottleTransform;
     bottleTransform = dynamic_cast<TransformComponent*>(bottletransform);
     
@@ -399,7 +323,7 @@ void PlayState::OnEnter()
 
     ////////////////////////////////////////// corona ////////////////////////////////////
 
-Entity* corona=new Entity();
+    Entity* corona=new Entity();
     corona->setID(2);
     /// Set Material
     ///// Material
@@ -434,7 +358,7 @@ Entity* corona=new Entity();
     coronastate->enable_alpha_test = false;
     coronastate->alpha_test_threshold = 0.5;
     
-    coronamaterial->setState(rstate);
+    coronamaterial->setState(coronastate);
     ///
     coronamaterial->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
     coronamaterial->AddUniforms("alpha",alpha);
@@ -462,7 +386,7 @@ Entity* corona=new Entity();
     glm::vec3 coronapos={20,5,0};
     glm::vec3 coronarot={0,0,0};
     glm::vec3 coronasc={2,2,2};
-    Component* coronatransform =new TransformComponent(1,coronapos,coronarot, coronasc);
+    Component* coronatransform =new TransformComponent(1,coronapos,coronarot, coronasc,NULL);
     TransformComponent* coronaTransform;
     coronaTransform = dynamic_cast<TransformComponent*>(coronatransform);
   //  coronaTransform->setParent(TempTrans);
@@ -470,8 +394,6 @@ Entity* corona=new Entity();
    ///// Adding Component
     corona->addComponent(coronamesh);
     corona->addComponent(coronatransform);
-
-
     ////////////////////////////////////////// road ////////////////////////////////////
 
     Entity* road=new Entity();
@@ -538,7 +460,7 @@ Entity* corona=new Entity();
     glm::vec3 roadpos={0,0,0};
     glm::vec3 roadrot={0,0,0};
     glm::vec3 roadsc={100,10,200};
-    Component* roadtransform =new TransformComponent(1,roadpos,roadrot,roadsc);
+    Component* roadtransform =new TransformComponent(1,roadpos,roadrot,roadsc,NULL);
     TransformComponent* roadTransform;
     roadTransform = dynamic_cast<TransformComponent*>(roadtransform);
    // roadTransform->setParent(camTransform);
@@ -558,13 +480,13 @@ Entity* corona=new Entity();
     World.push_back(camera);    // world[0]
     World.push_back(road);
     World.push_back(E1);        // world[2]
-    World.push_back(E2);        // world[3]
+    //World.push_back(E2);        // world[3]
     World.push_back(bottle);
     World.push_back(corona);
 
     player->addObject(camera);
     player->addObject(E1);
-    player->addObject(E2);
+   // player->addObject(E2);
     player->addObject(road);
     player->addObject(bottle);
     player->addObject(corona);
@@ -601,7 +523,6 @@ void PlayState::OnDraw(double deltaTime)
 
     
     cam_delta->setDeltaTime(deltaTime);
-    cam_delta->update(deltaTime,camTransform,camSky);
 
     ///// on update for each entity
     TransformComponent* tc;
@@ -636,7 +557,16 @@ void PlayState::OnDraw(double deltaTime)
 
 /////////////////////////////////////////////////////////////////////
     player->movePlayer();
+    cam_delta->update(deltaTime,camTransform,camSky);
+    camTransform->to_mat4();
+    generateTimer++;
+    if (generateTimer > counter)
+    {
+        player->generateCorona((World[4]));
+        counter = counter +180;
+    }
     // get el vector w ab3to ll render system
+
 /////////////////////////////////////////////////////////////////
     renderEntities->RenderAll(player->getUpdatedVector(),World[0],lights);
 

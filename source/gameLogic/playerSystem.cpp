@@ -66,19 +66,27 @@ void  playerSystem::movePlayer()
 
     glm::vec3 position = characterTransform->getPosition();
     glm::vec3 rot = characterTransform->getRotation();
-    if(application->getKeyboard().isPressed(GLFW_KEY_T))
-    { 
-        position.z = position.z - 0.05 ;
-    }
+        position.z = position.z - 0.3 ;
     if(application->getKeyboard().isPressed(GLFW_KEY_F)) 
     {
-        position.x = position.x - 0.05;
+        if (position.x > -8 )
+            position.x = position.x - 0.5;
     } 
     if(application->getKeyboard().isPressed(GLFW_KEY_H))
     { 
-        position.x = position.x + 0.05 ;
+        if (position.x < 8)
+            position.x = position.x + 0.5 ;
     }
+
     characterTransform->setPosition(position);
+
+    vector<Component*> cameraVector;
+    cameraVector = AllEntities[0]->getComponents();
+    TransformComponent* cameraTransform;
+    CameraComponent* camComp;
+    cameraTransform = dynamic_cast<TransformComponent*>(cameraVector[0]);
+    camComp = dynamic_cast<CameraComponent*>(cameraVector[1]);
+    cameraTransform->to_mat4();
     checkCollision(characterTransform);
 }
 int playerSystem::getHealth()
@@ -93,4 +101,45 @@ void playerSystem::addObject(Entity* obj)
 vector<Entity*> playerSystem::getUpdatedVector()
 {
     return AllEntities;
+}
+
+/////////////////////////////////////////////////////////
+   /*
+        get trnaform ll corona , among us /
+        do{
+            int rand = rand() % 15;
+        }while(rand < 5);
+
+        corona.z -> character.z + rand
+        corona.x = char.x
+        corona.y = char.y 
+        push All Entities
+    */
+void  playerSystem::generateCorona(Entity* corona)
+{
+    TransformComponent* coronaTransform;
+    for (int i=0;i<corona->getComponents().size() ;i++)
+    {
+        coronaTransform = dynamic_cast<TransformComponent*>(corona->getComponents()[i]);
+        if (coronaTransform != NULL)
+         break;
+    }
+    //////////////////////////
+    vector<Component*> transformVector;
+    transformVector = playerEntity->getComponents();
+    TransformComponent* characterTransform;
+    characterTransform = dynamic_cast<TransformComponent*>(transformVector[1]);
+
+    int random;
+    do{
+            random = std::rand() % 50;
+    }while(random < 20);
+    glm::vec3 position;
+    position.z = characterTransform->getPosition().z - random;
+    position.y = characterTransform->getPosition().y;
+    position.x = characterTransform->getPosition().x;
+
+    coronaTransform->setPosition(position);
+
+    AllEntities.push_back(corona);
 }

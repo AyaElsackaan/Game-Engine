@@ -23,7 +23,7 @@ class CameraController : public Component {
 
         float yaw_sensitivity, pitch_sensitivity, fov_sensitivity;
         glm::vec3 position_sensitivity;
-        float speedup_factor = 5.0f; // A speed multiplier if "Left Shift" is held.
+        float speedup_factor = 10.0f; // A speed multiplier if "Left Shift" is held.
 
         bool mouse_locked = false;
 

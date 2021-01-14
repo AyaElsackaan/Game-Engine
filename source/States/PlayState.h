@@ -27,6 +27,8 @@ class PlayState : public State {
     std::unordered_map<std::string, std::unique_ptr<GAME::Mesh>> meshes;
     std::unordered_map<std::string, Texture2D*> textures;
     GLuint sampler;
+    double generateTimer=0;
+    int counter=180;
 
 
     GAME::Application* application;
@@ -39,6 +41,7 @@ class PlayState : public State {
     void setApplication(GAME::Application* app);
      void setHeight(int h);
     void setWidth(int w);
+    void generateCorona();
   //  int getHeight();
   //  int getWidth();
     void OnEnter() ;

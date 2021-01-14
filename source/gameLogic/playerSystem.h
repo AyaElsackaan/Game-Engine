@@ -7,15 +7,21 @@
 #include "../common/Components/TransformComponent.h"
 #include <vector>
 #include <iostream>
+#include "../common/Components/CameraComponent.h"
 using namespace std;
 class playerSystem {
     private : 
         Entity* playerEntity;
+        
         // Entity* powerCohol;
         // Entity* powerMask;
         int health;
         GAME::Application* application;
         vector<Entity*> AllEntities;  // coronas + powerups
+
+      //  Entity corona;
+
+        double delta_time;
 
 
 
@@ -26,7 +32,9 @@ class playerSystem {
       int getHealth();
       void addObject(Entity* obj);
       vector<Entity*> getUpdatedVector();
-
+    //  void setCorona(Entity c);
+    //////////generate ////////
+    void generateCorona(Entity* corona);
 
       
 

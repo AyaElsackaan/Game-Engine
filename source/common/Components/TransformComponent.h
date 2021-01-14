@@ -19,7 +19,7 @@ private:
 
 public:
     TransformComponent(int ord, glm::vec3 pos, glm::vec3 rot,
-                       glm::vec3 sc);
+                       glm::vec3 sc, TransformComponent* p);
     glm:: mat4 to_mat4() const;
     void setScale(glm::vec3 sc);
     void setPosition(glm::vec3 pos);

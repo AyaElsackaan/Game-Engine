@@ -15,7 +15,8 @@ class playerSystem {
         
         // Entity* powerCohol;
         // Entity* powerMask;
-        int health;
+        int health = 100;
+        int flag = 0;
         GAME::Application* application;
         vector<Entity*> AllEntities;  // coronas + powerups
         vector<Entity*> CoronaS;
@@ -31,12 +32,14 @@ class playerSystem {
       void checkCollision(TransformComponent* p);
       void  movePlayer();
       int getHealth();
+      int getFlag();
       void addObject(Entity* obj);
       vector<Entity*> getUpdatedVector();
 
      void addCorona(Entity* c);
     //////////generate ////////
     void generateCorona();
+    void generateBottle();
 
       
 

@@ -121,8 +121,11 @@ void GAME::Application::configureOpenGL() {
 
 void GAME::Application::onInitialize()
 {
-            PlayState* ps = new PlayState();
-            this->CurrentState = ps;
+            // PlayState* ps = new PlayState();
+            // this->CurrentState = ps;
+            // this->NextState = NULL; 
+            MenuState* ms = new MenuState();
+            this->CurrentState = ms;
             this->NextState = NULL;
 }        
 GAME::WindowConfiguration GAME::Application::getWindowConfiguration() {
@@ -199,11 +202,29 @@ int GAME::Application::run() {
     MenuState* ms;
 
     ps = dynamic_cast<PlayState*>( CurrentState);
-    ps->setHeight(h);
-    ps->setWidth(w);
-    ps->setApplication(this);
-    ps->OnEnter();
-
+    ms = dynamic_cast<MenuState*>( CurrentState);
+    if(ps)
+    {
+        ps->setHeight(h);
+        ps->setWidth(w);
+        ps->setApplication(this);
+        ps->OnEnter();
+   
+    }
+    else
+    {
+        ms->setHeight(h);
+        ms->setWidth(w);
+        ms->setApplication(this);
+        ms->OnEnter();  
+    }
+    
+    
+   /* CurrentState->setHeight(h);
+    CurrentState->setWidth(w);
+    CurrentState->setApplication(this);
+    CurrentState->OnEnter();
+*/
 
     // The time at which the last frame started. But there was no frames yet, so we'll just pick the current time.
     double last_frame_time = glfwGetTime();
@@ -234,8 +255,20 @@ int GAME::Application::run() {
 
         // Get the current time (the time at which we are starting the current frame).
         double current_frame_time = glfwGetTime();
-
-        
+         ps = dynamic_cast<PlayState*>( CurrentState);
+        ms = dynamic_cast<MenuState*>( CurrentState);
+        if(ms)
+        {
+            if(this->getKeyboard().isPressed(GLFW_KEY_SPACE))
+            {
+                ps=new PlayState();
+                NextState=ps;
+            } 
+            if(this->getKeyboard().isPressed(GLFW_KEY_ESCAPE))
+            {
+            break;
+            }
+        }        
         /// Check State
         if(NextState != NULL)
         {
@@ -247,19 +280,30 @@ int GAME::Application::run() {
 
             CurrentState = NextState;
             NextState = NULL;
-            if(ps!=NULL)
-            {
-                int w,h;
-               glfwGetFramebufferSize(window, &w, &h);
-               ps->setHeight(h);
-               ps->setWidth(w);
-               ps->setApplication(this);
-               ps->OnEnter();
-            }
-            else
-            {
-                ms->OnEnter();
-            } 
+           
+            int w,h;
+            glfwGetFramebufferSize(window, &w, &h);
+            
+          ps = dynamic_cast<PlayState*>( CurrentState);
+          ms = dynamic_cast<MenuState*>( CurrentState);
+        if(ps)
+        {
+            ps->setHeight(h);
+            ps->setWidth(w);
+            ps->setApplication(this);
+            ps->OnEnter();
+    
+        }
+        else
+        {
+            
+            ms->setHeight(h);
+            ms->setWidth(w);
+            ms->setApplication(this);
+            ms->OnEnter();  
+        }
+        
+         
         }
         
 

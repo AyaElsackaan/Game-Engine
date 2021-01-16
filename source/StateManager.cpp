@@ -3,6 +3,7 @@
 #include "StateManager.h"
 #include "./States/PlayState.h"
 #include "./States/MenuState.h"
+#include "./States/State.h"
 
 
 void StateManager::setNext(State * ns)
@@ -23,38 +24,44 @@ State* StateManager::getNext()
     }
     StateManager::StateManager()
     {
-        PlayState* ps = new PlayState();
+        MenuState* ms = new MenuState();
 
-        CurrentState = ps;
+        CurrentState = ms;
     }
 
 void StateManager::onDraw (double deltaTime)
 {
-    PlayState* ps;
-    ps = dynamic_cast<PlayState*>( CurrentState);
-    ps->OnDraw(deltaTime);
-  //  MenuState* ms;
-   // ps = dynamic_cast<MenuState*>(NextState);
-   // ps->OnDraw(deltaTime);
+    /*PlayState* ps = dynamic_cast<PlayState*>( CurrentState);
+    if(ps)
+        ps->OnDraw(deltaTime);
+    else
+    {
+        MenuState* ms = dynamic_cast<MenuState*>( CurrentState); 
+        ms->OnDraw(deltaTime);
+    }*/
+    CurrentState->OnDraw(deltaTime);
+    
+  
 
 }
 void StateManager:: onInitialize ()
 {
             int w,h;
             glfwGetFramebufferSize(window, &w, &h);
-            PlayState* ps;
-            ps = dynamic_cast<PlayState*>( CurrentState);
-            ps->setHeight(h);
-            ps->setWidth(w);
-            ps->setApplication(this);
-            ps->OnEnter();
+            MenuState* ms;
+            ms = dynamic_cast<MenuState*>( CurrentState);
+            ms->setHeight(h);
+            ms->setWidth(w);
+            ms->setApplication(this);
+            ms->OnEnter();
 
 }
 void StateManager:: onDestroy ()
 {
-        PlayState* ps;
+       /* PlayState* ps;
         ps = dynamic_cast<PlayState*>( CurrentState);
-        ps->OnExit();
+        ps->OnExit();*/
+        CurrentState->OnExit();
 }
 
 void StateManager::GoToState (State * NextState){
@@ -68,11 +75,7 @@ void StateManager::GoToState (State * NextState){
             NextState = NULL;
         }
         CurrentState->OnEnter();
-      //  CurrentState->OnDraw(delta);
     }
-
-  // if(CurrentState != NULL)
-  //      CurrentState->OnExit();
 
 }
 
@@ -80,8 +83,8 @@ int main(int argc, char** argv)
 {
     GAME::Application* app= new GAME::Application();
     PlayState* ps = new PlayState();
-   // MenuState* ms = new MenuState();
-    app->CurrentState = ps;
+    MenuState* ms = new MenuState();
+    app->CurrentState = ms;
     app->NextState = NULL;
 
     return app->run();

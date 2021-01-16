@@ -47,12 +47,12 @@ void PlayState::OnEnter()
 {
     
     program.create();
-    program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/transform.vert", GL_VERTEX_SHADER);
-    program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/tint.frag", GL_FRAGMENT_SHADER);
+    program.attach("../../assets/shaders/ex11_transformation/transform.vert", GL_VERTEX_SHADER);
+    program.attach("../../assets/shaders/ex11_transformation/tint.frag", GL_FRAGMENT_SHADER);
     program.link();
     sky_program.create();
-        sky_program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/sky.vert", GL_VERTEX_SHADER);
-        sky_program.attach("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/shaders/ex11_transformation/sky.frag", GL_FRAGMENT_SHADER);
+        sky_program.attach("../../assets/shaders/ex11_transformation/sky.vert", GL_VERTEX_SHADER);
+        sky_program.attach("../../assets/shaders/ex11_transformation/sky.frag", GL_FRAGMENT_SHADER);
         sky_program.link();
 
     //////////////////////////////////////////////////////////////////
@@ -91,44 +91,44 @@ void PlayState::OnEnter()
     lights.push_back(DirEntity);
     ///////////////////////////////////////////////////////////////////
     // Textures
-        Texture2D* texturem0 = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/corona/normal.png");
+        Texture2D* texturem0 = new Texture2D("../../assets/models/corona/normal.png");
         textures["mask_albedo"] = texturem0;
-        Texture2D* texturem1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/asphalt/specular.jpg");
+        Texture2D* texturem1 = new Texture2D( "../../assets/images/common/materials/asphalt/specular.jpg");
         textures["mask_specular"] = texturem1;
-        Texture2D* texturem2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/asphalt/roughness.jpg");
+        Texture2D* texturem2 = new Texture2D( "../../assets/images/common/materials/asphalt/roughness.jpg");
         textures["mask_roughness"] = texturem2;
         
-          Texture2D* textureroad = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/asphalt/albedo.jpg");
+          Texture2D* textureroad = new Texture2D("../../assets/images/common/materials/asphalt/albedo.jpg");
         textures["road_albedo"] = textureroad;
-        Texture2D* textureroad1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/asphalt/specular.jpg");
+        Texture2D* textureroad1 = new Texture2D( "../../assets/images/common/materials/asphalt/specular.jpg");
         textures["road_specular"] = textureroad1;
-        Texture2D* textureroad2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/asphalt/roughness.jpg");
+        Texture2D* textureroad2 = new Texture2D( "../../assets/images/common/materials/asphalt/roughness.jpg");
         textures["road_roughness"] = textureroad2;
 
-        Texture2D* texture = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/char/Plastic_4K_Diffuse.jpg");
+        Texture2D* texture = new Texture2D("../../assets/models/char/Plastic_4K_Diffuse.jpg");
         textures["among_albedo"] = texture;
-        Texture2D* texture1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/char/Plastic_4K_Normal.jpg");
+        Texture2D* texture1 = new Texture2D( "../../assets/models/char/Plastic_4K_Normal.jpg");
         textures["among_specular"] = texture1;
-        Texture2D* texture2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/char/Plastic_4K_Reflect.jpg");
+        Texture2D* texture2 = new Texture2D( "../../assets/models/char/Plastic_4K_Reflect.jpg");
         textures["among_roughness"] = texture2;
         
 
-        Texture2D* texturebottle = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/glass/diffuse.jpg");
+        Texture2D* texturebottle = new Texture2D("../../assets/images/common/materials/glass/diffuse.jpg");
         textures["bottle_albedo"] = texturebottle;
-        Texture2D* texturebottle1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/glass/glasss.png");
+        Texture2D* texturebottle1 = new Texture2D( "../../assets/images/common/materials/glass/glasss.png");
         textures["bottle_specular"] = texturebottle1;
-        Texture2D* texturebottle2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/glass/roughness.png");
+        Texture2D* texturebottle2 = new Texture2D( "../../assets/images/common/materials/glass/roughness.png");
         textures["bottle_roughness"] = texturebottle2;
 
-        Texture2D* texturecorona = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/corona/base.png");
+        Texture2D* texturecorona = new Texture2D("../../assets/models/corona/base.png");
         textures["corona_albedo"] = texturecorona;
-        Texture2D* texturecorona1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/corona/specular.png");
+        Texture2D* texturecorona1 = new Texture2D( "../../assets/models/corona/specular.png");
         textures["corona_specular"] = texturecorona1;
-        Texture2D* texturecorona2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/corona/roughness.png");
+        Texture2D* texturecorona2 = new Texture2D( "../../assets/models/corona/roughness.png");
         textures["corona_roughness"] = texturecorona2;
         
         
-        Texture2D* moon = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/moon.jpg");
+        Texture2D* moon = new Texture2D( "../../assets/images/common/moon.jpg");
         textures["moon"] = texture;
         
         Sampler2D* sampler = new Sampler2D();
@@ -142,7 +142,7 @@ void PlayState::OnEnter()
     ////// Mesh
     E1->setID(1);
     meshes["character"] = std::make_unique<GAME::Mesh>();
-    GAME::mesh_utils::loadOBJ(*(meshes["character"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/char/among us.obj");
+    GAME::mesh_utils::loadOBJ(*(meshes["character"]), "../../assets/models/char/among us.obj");
     ///// Material
     Material* material = new Material();
     
@@ -305,7 +305,7 @@ void PlayState::OnEnter()
     bottlematerial->setShader(&program);
      ////// Mesh
     meshes["bottle"] = std::make_unique<GAME::Mesh>();
-   GAME::mesh_utils::loadOBJ(*(meshes["bottle"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/bottle/Bottle.obj");
+   GAME::mesh_utils::loadOBJ(*(meshes["bottle"]), "../../assets/models/bottle/Bottle.obj");
     ////// MeshRanderer Component
     Component* bottlemesh =new MeshRenderer(0,bottlematerial,&*(meshes["bottle"]));
    /////// Transform Component
@@ -382,7 +382,7 @@ void PlayState::OnEnter()
         coronamaterial->setShader(&program);
         ////// Mesh
         meshes["corona" + std::to_string(i)] = std::make_unique<GAME::Mesh>();
-       // GAME::mesh_utils::loadOBJ(*(meshes["corona" + std::to_string(i)]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/corona/corona_virus.obj");
+       // GAME::mesh_utils::loadOBJ(*(meshes["corona" + std::to_string(i)]), "../../assets/models/corona/corona_virus.obj");
         GAME::mesh_utils::Sphere(*(meshes["corona" + std::to_string(i)]), {64, 32}, false);
         ////// MeshRanderer Component
         Component* coronamesh =new MeshRenderer(0,coronamaterial,&*(meshes["corona"+ std::to_string(i)]));
@@ -459,7 +459,7 @@ void PlayState::OnEnter()
     roadmaterial->setShader(&program);
      ////// Mesh
     meshes["road"] = std::make_unique<GAME::Mesh>();
-       GAME::mesh_utils::loadOBJ(*(meshes["road"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/road/road.obj");
+       GAME::mesh_utils::loadOBJ(*(meshes["road"]), "../../assets/models/road/road.obj");
 
    // GAME::mesh_utils::Plane(*(meshes["road"]), {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
     ////// MeshRanderer Component

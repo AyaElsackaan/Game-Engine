@@ -121,20 +121,22 @@ void CameraComponent::setupOrthographic(float orthographic_height, float aspect_
 
         glm::mat4 CameraComponent::getViewMatrix(TransformComponent*t)
         {
-            if(dirtyFlags & V_DIRTY){ // sOnly regenerate the view matrix if its flag is dirty
-                V = glm::lookAt(t->getPosition(), t->getPosition() + t->getRotation(), t->getScale());
-                dirtyFlags &= ~V_DIRTY; // V is no longer dirty
-            }
+            //if(dirtyFlags & V_DIRTY){ // sOnly regenerate the view matrix if its flag is dirty
+                V = glm::lookAt(glm::vec3(t->to_mat4() *glm::vec4{0,0,0,1}) , glm::vec3(t->to_mat4() *glm::vec4{0,0,0,1}) + glm::vec3(t->to_mat4() *glm::vec4{0,0,-1,0}) , glm::vec3(t->to_mat4() *glm::vec4{0,1,0,0}) );
+                // Rotation -> "model matrix" x Pos:{0,0,0,1}, up{0,1,0,0} ,dir:{0,0,-1,0}
+
+             //   dirtyFlags &= ~V_DIRTY; // V is no longer dirty
+          //  }
             return V;
         }
 
         glm::mat4 CameraComponent::getVPMatrix(TransformComponent*t){
-            if(dirtyFlags & VP_DIRTY){
+          //  if(dirtyFlags & VP_DIRTY){
                 VP = getProjectionMatrix() * getViewMatrix(t);
                 // Note that we called the functions getProjectionMatrix & getViewMatrix instead of directly using V & P
                 // to make sure that they are not outdated
-                dirtyFlags = 0; // Nothing is dirty anymore
-            }
+           //     dirtyFlags = 0; // Nothing is dirty anymore
+          //  }
             return VP;
         }
 

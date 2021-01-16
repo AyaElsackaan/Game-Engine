@@ -1,8 +1,9 @@
 #include "playerSystem.h"
 
 
-playerSystem::playerSystem(Entity* p, GAME::Application* app)
+playerSystem::playerSystem(Entity* p, Entity* H, GAME::Application* app)
 {
+        HealthBar = H;
         playerEntity = p;
         health = 100;
         application = app;
@@ -28,11 +29,17 @@ void playerSystem::checkCollision(TransformComponent* p)
                     shield
                     delete el (this-> mask ) 
     */
+    //healthbar transform
+        vector<Component *> bar  = HealthBar->getComponents();
+        TransformComponent * healthTransform ;
+        healthTransform = dynamic_cast<TransformComponent*>( bar[1]); 
+  
    for (int i =0; i < AllEntities.size();i++)
    {
         vector<Component *> Allcomponents  = AllEntities[i]->getComponents();
         TransformComponent * transfCorona;
         transfCorona = dynamic_cast<TransformComponent*>( Allcomponents[1]); 
+       
        if (AllEntities[i]->getID() == 2)
        {
            double distanceS = distance(transfCorona->getPosition(),p->getPosition());
@@ -41,6 +48,8 @@ void playerSystem::checkCollision(TransformComponent* p)
                if (health > 0)
                {
                     health -= 10;
+                    glm::vec3 scale = healthTransform->getScale();
+                    healthTransform->setScale(glm::vec3{scale.x - 20,scale.y,scale.z});
                     cout << health <<endl;
                }
 
@@ -60,8 +69,13 @@ void playerSystem::checkCollision(TransformComponent* p)
            if (distanceS <= 8)
            {
                 if (health < 100)
+                {
                     health += 5;
-                cout << health<<endl;
+                    glm::vec3 scale = healthTransform->getScale();
+                    healthTransform->setScale(glm::vec3{scale.x + 10,scale.y,scale.z});
+                     cout << health<<endl;
+
+                }
 
                 TransformComponent* coronaTransform;
                 for (int j=0;j<AllEntities[i]->getComponents().size() ;j++)

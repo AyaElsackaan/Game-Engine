@@ -136,6 +136,13 @@ void PlayState::OnEnter()
         textures["house_specular"] = texturehouse1;
         Texture2D* texturehouse2 = new Texture2D( "../../assets/images/common/materials/wood/roughness.jpg");
         textures["house_roughness"] = texturehouse2;
+
+         Texture2D* texturehealth = new Texture2D("../../assets/images/common/materials/red.jpg");
+        textures["house_albedo"] = texturehealth;
+        Texture2D* texturehealth1 = new Texture2D( "../../assets/images/common/materials/wood/specular.jpg");
+        textures["house_specular"] = texturehealth1;
+        Texture2D* texturehealth2 = new Texture2D( "../../assets/images/common/materials/wood/roughness.jpg");
+        textures["house_roughness"] = texturehealth2;
         
         Texture2D* moon = new Texture2D( "../../assets/images/common/moon.jpg");
         textures["moon"] = texture;
@@ -143,7 +150,8 @@ void PlayState::OnEnter()
         Sampler2D* sampler = new Sampler2D();
         for(GLuint unit = 0; unit < 5; ++unit) sampler->bind(unit);
     
-    
+
+
 
     
     ///////////////////////////////////////////// character //////////////////////////////////////////////
@@ -222,7 +230,82 @@ void PlayState::OnEnter()
     E1->addComponent(mesh);
     E1->addComponent(transform);
 
-    player = new playerSystem(E1,application);
+  ////////////////////////////////////////// health ////////////////////////////////////
+
+    Entity* healthbar=new Entity();
+    healthbar->setID(15);
+    /// Set Material
+    ///// Material
+    Material*  healthbarmaterial = new Material();
+    
+    alpha = 1;
+
+   /// Set RenderState
+    RenderState*  healthbarstate = new RenderState();
+    if (alpha == 1)
+    {
+         healthbarstate->Opaque = true; // 3ashan el tint akher haga feh b 1
+         healthbarstate->Enable_DepthTesting = true;
+    }
+    else
+    {
+       healthbarstate->Opaque = false; // 3ashan el tint akher haga feh b 1
+        healthbarstate->Enable_DepthTesting = true;
+    }
+    healthbarstate->depth_function = GL_LEQUAL;
+    healthbarstate->enable_transparent_depth_write = true;
+    healthbarstate->Enable_Culling = true;
+    healthbarstate->culled_face = GL_BACK;
+
+    healthbarstate->front_face_winding = GL_CCW;
+    healthbarstate->Enable_Blending = true;
+    healthbarstate->blend_equation = GL_FUNC_ADD;
+    healthbarstate->blend_source_function = GL_SRC_ALPHA;
+    healthbarstate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
+    healthbarstate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
+    healthbarstate->enable_alpha_to_coverage = false;
+    healthbarstate->enable_alpha_test = false;
+    healthbarstate->alpha_test_threshold = 0.5;
+    
+    healthbarmaterial->setState(healthbarstate);
+    ///
+    healthbarmaterial->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
+    healthbarmaterial->AddUniforms("alpha",alpha);
+    //pair<Texture2D*,Sampler2D*> pi;
+    pi.first = texturehealth;
+    pi.second = sampler;
+    healthbarmaterial->AddUniforms("albedo_map", pi);
+    healthbarmaterial->AddUniforms("albedo_tint",glm::vec3{1,0,0});
+    pi.first = texturehealth1;
+    healthbarmaterial->AddUniforms("specular_map",pi);
+    healthbarmaterial->AddUniforms("specular_tint" ,temp2);
+    pi.first = texturehealth2;
+    healthbarmaterial->AddUniforms("roughness_map",pi);
+    healthbarmaterial->AddUniforms("roughness_range",temps);
+    pi.first = moon; 
+    healthbarmaterial->AddUniforms("emissive_map",pi);
+    healthbarmaterial->AddUniforms("emissive_tint",temp1);
+    healthbarmaterial->setShader(&program);
+    ////// MeshRanderer Component
+    meshes["health"] = std::make_unique<GAME::Mesh>();
+    GAME::mesh_utils::Cuboid(*(meshes["health"]));
+
+    Component* healthbarmesh =new MeshRenderer(0,healthbarmaterial,&*(meshes["health"]));
+   /////// Transform Component
+    glm::vec3 healthbarpos={60,455,0};
+    glm::vec3 healthbarrot={1.55,1.29,0.83};
+    glm::vec3 healthbarsc={200,0.5,10};
+    Component* healthbartransform =new TransformComponent(1,healthbarpos,healthbarrot,healthbarsc,TempTrans);
+    TransformComponent* healthbarTransform;
+    healthbarTransform = dynamic_cast<TransformComponent*>(healthbartransform);
+   // roadTransform->setParent(camTransform);
+    //TempTransform->setParent(TempTrans); // set cube as parent for sphere
+
+   ///// Adding Component
+    healthbar->addComponent(healthbarmesh);
+    healthbar->addComponent(healthbartransform);
+
+player = new playerSystem(E1,healthbar,application);
 
     ////////////////////////////////////////// Camera Component ////////////////////////////////////
     Entity* camera=new Entity();
@@ -562,82 +645,6 @@ void PlayState::OnEnter()
     house->addComponent(housemesh);
     house->addComponent(housetransform);
 
-  ////////////////////////////////////////// health ////////////////////////////////////
-
-    Entity* healthbar=new Entity();
-    healthbar->setID(11);
-    /// Set Material
-    ///// Material
-    Material*  healthbarmaterial = new Material();
-    
-    alpha = 1;
-
-   /// Set RenderState
-    RenderState*  healthbarstate = new RenderState();
-    if (alpha == 1)
-    {
-         healthbarstate->Opaque = true; // 3ashan el tint akher haga feh b 1
-         healthbarstate->Enable_DepthTesting = true;
-    }
-    else
-    {
-       healthbarstate->Opaque = false; // 3ashan el tint akher haga feh b 1
-        healthbarstate->Enable_DepthTesting = true;
-    }
-    healthbarstate->depth_function = GL_LEQUAL;
-    healthbarstate->enable_transparent_depth_write = true;
-    healthbarstate->Enable_Culling = true;
-    healthbarstate->culled_face = GL_BACK;
-
-    healthbarstate->front_face_winding = GL_CCW;
-    healthbarstate->Enable_Blending = true;
-    healthbarstate->blend_equation = GL_FUNC_ADD;
-    healthbarstate->blend_source_function = GL_SRC_ALPHA;
-    healthbarstate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
-    healthbarstate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
-    healthbarstate->enable_alpha_to_coverage = false;
-    healthbarstate->enable_alpha_test = false;
-    healthbarstate->alpha_test_threshold = 0.5;
-    
-    healthbarmaterial->setState(healthbarstate);
-    ///
-    healthbarmaterial->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
-    healthbarmaterial->AddUniforms("alpha",alpha);
-    //pair<Texture2D*,Sampler2D*> pi;
-    pi.first = texturehouse;
-    pi.second = sampler;
-    healthbarmaterial->AddUniforms("albedo_map", pi);
-    healthbarmaterial->AddUniforms("albedo_tint",temp);
-    pi.first = texturehouse1;
-    healthbarmaterial->AddUniforms("specular_map",pi);
-    healthbarmaterial->AddUniforms("specular_tint" ,temp2);
-    pi.first = texturehouse2;
-    healthbarmaterial->AddUniforms("roughness_map",pi);
-    healthbarmaterial->AddUniforms("roughness_range",temps);
-    pi.first = moon; 
-    healthbarmaterial->AddUniforms("emissive_map",pi);
-    healthbarmaterial->AddUniforms("emissive_tint",temp1);
-    healthbarmaterial->setShader(&program);
-    ////// MeshRanderer Component
-    meshes["health"] = std::make_unique<GAME::Mesh>();
-    GAME::mesh_utils::Cuboid(*(meshes["health"]));
-
-    Component* healthbarmesh =new MeshRenderer(0,healthbarmaterial,&*(meshes["health"]));
-   /////// Transform Component
-    glm::vec3 healthbarpos={800,300,0};
-    glm::vec3 healthbarrot={-0.98,4,1.2};
-    glm::vec3 healthbarsc={100,0,150};
-    Component* healthbartransform =new TransformComponent(1,healthbarpos,healthbarrot,healthbarsc,TempTrans);
-    TransformComponent* healthbarTransform;
-    healthbarTransform = dynamic_cast<TransformComponent*>(healthbartransform);
-   // roadTransform->setParent(camTransform);
-    //TempTransform->setParent(TempTrans); // set cube as parent for sphere
-
-   ///// Adding Component
-    healthbar->addComponent(healthbarmesh);
-    healthbar->addComponent(healthbartransform);
-
-
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
         meshes["cube"] = std::make_unique<GAME::Mesh>();
         GAME::mesh_utils::Cuboid(*(meshes["cube"]));
@@ -650,6 +657,9 @@ void PlayState::OnEnter()
     World.push_back(bottle);
     World.push_back(house);
   //  World.push_back(corona);
+
+
+    
 
     player->addObject(E1);
     player->addObject(road);

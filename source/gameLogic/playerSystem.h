@@ -12,9 +12,7 @@ using namespace std;
 class playerSystem {
     private : 
         Entity* playerEntity;
-        
-        // Entity* powerCohol;
-        // Entity* powerMask;
+        Entity* HealthBar;
         int health = 100;
         int flag = 0;
         GAME::Application* application;
@@ -28,7 +26,7 @@ class playerSystem {
 
 
     public:
-      playerSystem(Entity* p, GAME::Application* app);
+      playerSystem(Entity* p, Entity* H,GAME::Application* app);
       void checkCollision(TransformComponent* p);
       void  movePlayer();
       int getHealth();

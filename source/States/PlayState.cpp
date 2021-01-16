@@ -11,6 +11,9 @@
 #include "../common/Components/TransformComponent.h"
 #include "../common//Components//CameraControllerComponent.h"
 #include "../common/Material.hpp"
+#include <glm/gtc/constants.hpp>
+#include <glm/trigonometric.hpp>
+#include <glm/gtx/fast_trigonometry.hpp>
 
 #include <json/json.hpp>
 #include <fstream>
@@ -98,7 +101,7 @@ void PlayState::OnEnter()
         Texture2D* texturem2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/asphalt/roughness.jpg");
         textures["mask_roughness"] = texturem2;
         
-          Texture2D* textureroad = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/asphalt/albedo.jpg");
+          Texture2D* textureroad = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/asphalt/road.jpg");
         textures["road_albedo"] = textureroad;
         Texture2D* textureroad1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/asphalt/specular.jpg");
         textures["road_specular"] = textureroad1;
@@ -127,6 +130,12 @@ void PlayState::OnEnter()
         Texture2D* texturecorona2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/corona/roughness.png");
         textures["corona_roughness"] = texturecorona2;
         
+        Texture2D* texturehouse = new Texture2D("C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/House/House.jpeg");
+        textures["house_albedo"] = texturehouse;
+        Texture2D* texturehouse1 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/materials/wood/specular.jpg");
+        textures["house_specular"] = texturehouse1;
+        Texture2D* texturehouse2 = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engin/assets/images/common/materials/wood/roughness.jpg");
+        textures["house_roughness"] = texturehouse2;
         
         Texture2D* moon = new Texture2D( "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/images/common/moon.jpg");
         textures["moon"] = texture;
@@ -218,9 +227,9 @@ void PlayState::OnEnter()
     ////////////////////////////////////////// Camera Component ////////////////////////////////////
     Entity* camera=new Entity();
     camera->setID(5);
-    glm::vec3 pos_cam={3000,7000,5000};
-    glm::vec3 rot_c={1000,0,0};
-    glm::vec3 sc_cam={0,1,0};
+    glm::vec3 pos_cam={0,500,-150};
+    glm::vec3 rot_c={-0.98,3.55,0};
+    glm::vec3 sc_cam={1,1,1};
 
     Component* transform_cam= new TransformComponent(1,pos_cam, rot_c, sc_cam,TempTrans);
     Component* cam_component= new CameraComponent(2);
@@ -459,15 +468,14 @@ void PlayState::OnEnter()
     roadmaterial->setShader(&program);
      ////// Mesh
     meshes["road"] = std::make_unique<GAME::Mesh>();
-       GAME::mesh_utils::loadOBJ(*(meshes["road"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/road/road.obj");
+    GAME::mesh_utils::loadOBJ(*(meshes["road"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/road/road.obj");
 
-   // GAME::mesh_utils::Plane(*(meshes["road"]), {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
     ////// MeshRanderer Component
     Component* roadmesh =new MeshRenderer(0,roadmaterial,&*(meshes["road"]));
    /////// Transform Component
     glm::vec3 roadpos={0,0,0};
     glm::vec3 roadrot={0,0,0};
-    glm::vec3 roadsc={10,10,2000};
+    glm::vec3 roadsc={10,1,8000};
     Component* roadtransform =new TransformComponent(1,roadpos,roadrot,roadsc,NULL);
     TransformComponent* roadTransform;
     roadTransform = dynamic_cast<TransformComponent*>(roadtransform);
@@ -478,8 +486,159 @@ void PlayState::OnEnter()
     road->addComponent(roadmesh);
     road->addComponent(roadtransform);
 
- 
-        
+  ////////////////////////////////////////// house ////////////////////////////////////
+
+    Entity* house=new Entity();
+    house->setID(10);
+    /// Set Material
+    ///// Material
+    Material* housematerial = new Material();
+    
+    alpha = 1;
+
+   /// Set RenderState
+    RenderState* housestate = new RenderState();
+    if (alpha == 1)
+    {
+        housestate->Opaque = true; // 3ashan el tint akher haga feh b 1
+        housestate->Enable_DepthTesting = true;
+    }
+    else
+    {
+       housestate->Opaque = false; // 3ashan el tint akher haga feh b 1
+        housestate->Enable_DepthTesting = true;
+    }
+    housestate->depth_function = GL_LEQUAL;
+    housestate->enable_transparent_depth_write = true;
+    housestate->Enable_Culling = true;
+    housestate->culled_face = GL_BACK;
+
+    housestate->front_face_winding = GL_CCW;
+    housestate->Enable_Blending = true;
+    housestate->blend_equation = GL_FUNC_ADD;
+    housestate->blend_source_function = GL_SRC_ALPHA;
+    housestate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
+    housestate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
+    housestate->enable_alpha_to_coverage = false;
+    housestate->enable_alpha_test = false;
+    housestate->alpha_test_threshold = 0.5;
+    
+    housematerial->setState(housestate);
+    ///
+     housematerial->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
+     housematerial->AddUniforms("alpha",alpha);
+    //pair<Texture2D*,Sampler2D*> pi;
+    pi.first = texturehouse;
+    pi.second = sampler;
+    housematerial->AddUniforms("albedo_map", pi);
+     housematerial->AddUniforms("albedo_tint",temp);
+    pi.first = texturehouse1;
+    housematerial->AddUniforms("specular_map",pi);
+    housematerial->AddUniforms("specular_tint" ,temp2);
+    pi.first = texturehouse2;
+    housematerial->AddUniforms("roughness_map",pi);
+    housematerial->AddUniforms("roughness_range",temps);
+    pi.first = moon; 
+    housematerial->AddUniforms("emissive_map",pi);
+    housematerial->AddUniforms("emissive_tint",temp1);
+    housematerial->setShader(&program);
+     ////// Mesh
+    meshes["house"] = std::make_unique<GAME::Mesh>();
+    GAME::mesh_utils::loadOBJ(*(meshes["house"]), "C:/Users/aliaa/Desktop/Phase 2/Game-Engine/assets/models/House/House.obj");
+
+    ////// MeshRanderer Component
+    Component* housemesh =new MeshRenderer(0,housematerial,&*(meshes["house"]));
+   /////// Transform Component
+    glm::vec3 housepos={0,0,-8800};
+    glm::vec3 houserot={0,0,0};
+    glm::vec3 housesc={10,10,10};
+    Component* housetransform =new TransformComponent(1,housepos,houserot,housesc,NULL);
+    TransformComponent* houseTransform;
+    houseTransform = dynamic_cast<TransformComponent*>(housetransform);
+   // roadTransform->setParent(camTransform);
+    //TempTransform->setParent(TempTrans); // set cube as parent for sphere
+
+   ///// Adding Component
+    house->addComponent(housemesh);
+    house->addComponent(housetransform);
+
+  ////////////////////////////////////////// health ////////////////////////////////////
+
+    Entity* healthbar=new Entity();
+    healthbar->setID(11);
+    /// Set Material
+    ///// Material
+    Material*  healthbarmaterial = new Material();
+    
+    alpha = 1;
+
+   /// Set RenderState
+    RenderState*  healthbarstate = new RenderState();
+    if (alpha == 1)
+    {
+         healthbarstate->Opaque = true; // 3ashan el tint akher haga feh b 1
+         healthbarstate->Enable_DepthTesting = true;
+    }
+    else
+    {
+       healthbarstate->Opaque = false; // 3ashan el tint akher haga feh b 1
+        healthbarstate->Enable_DepthTesting = true;
+    }
+    healthbarstate->depth_function = GL_LEQUAL;
+    healthbarstate->enable_transparent_depth_write = true;
+    healthbarstate->Enable_Culling = true;
+    healthbarstate->culled_face = GL_BACK;
+
+    healthbarstate->front_face_winding = GL_CCW;
+    healthbarstate->Enable_Blending = true;
+    healthbarstate->blend_equation = GL_FUNC_ADD;
+    healthbarstate->blend_source_function = GL_SRC_ALPHA;
+    healthbarstate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
+    healthbarstate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
+    healthbarstate->enable_alpha_to_coverage = false;
+    healthbarstate->enable_alpha_test = false;
+    healthbarstate->alpha_test_threshold = 0.5;
+    
+    healthbarmaterial->setState(healthbarstate);
+    ///
+    healthbarmaterial->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
+    healthbarmaterial->AddUniforms("alpha",alpha);
+    //pair<Texture2D*,Sampler2D*> pi;
+    pi.first = texturehouse;
+    pi.second = sampler;
+    healthbarmaterial->AddUniforms("albedo_map", pi);
+    healthbarmaterial->AddUniforms("albedo_tint",temp);
+    pi.first = texturehouse1;
+    healthbarmaterial->AddUniforms("specular_map",pi);
+    healthbarmaterial->AddUniforms("specular_tint" ,temp2);
+    pi.first = texturehouse2;
+    healthbarmaterial->AddUniforms("roughness_map",pi);
+    healthbarmaterial->AddUniforms("roughness_range",temps);
+    pi.first = moon; 
+    healthbarmaterial->AddUniforms("emissive_map",pi);
+    healthbarmaterial->AddUniforms("emissive_tint",temp1);
+    healthbarmaterial->setShader(&program);
+    ////// MeshRanderer Component
+    meshes["health"] = std::make_unique<GAME::Mesh>();
+    GAME::mesh_utils::Cuboid(*(meshes["health"]));
+
+    Component* healthbarmesh =new MeshRenderer(0,healthbarmaterial,&*(meshes["health"]));
+   /////// Transform Component
+    glm::vec3 healthbarpos={800,300,0};
+    glm::vec3 healthbarrot={-0.98,4,1.2};
+    glm::vec3 healthbarsc={100,0,150};
+    Component* healthbartransform =new TransformComponent(1,healthbarpos,healthbarrot,healthbarsc,TempTrans);
+    TransformComponent* healthbarTransform;
+    healthbarTransform = dynamic_cast<TransformComponent*>(healthbartransform);
+   // roadTransform->setParent(camTransform);
+    //TempTransform->setParent(TempTrans); // set cube as parent for sphere
+
+   ///// Adding Component
+    healthbar->addComponent(healthbarmesh);
+    healthbar->addComponent(healthbartransform);
+
+
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
         meshes["cube"] = std::make_unique<GAME::Mesh>();
         GAME::mesh_utils::Cuboid(*(meshes["cube"]));
 
@@ -488,16 +647,15 @@ void PlayState::OnEnter()
     World.push_back(camera);    // world[0]
     World.push_back(road);
     World.push_back(E1);        // world[2]
-    //World.push_back(E2);        // world[3]
     World.push_back(bottle);
+    World.push_back(house);
   //  World.push_back(corona);
 
-  //  player->addObject(camera);
     player->addObject(E1);
-   // player->addObject(E2);
     player->addObject(road);
     player->addObject(bottle);
-  //  player->addObject(corona);
+    player->addObject(house);
+    player->addObject(healthbar);
    
     
 
@@ -511,6 +669,8 @@ void PlayState::OnEnter()
 }
 void PlayState::OnDraw(double deltaTime)
 {
+    health = player->getHealth();
+    finishFlag = player->getFlag();
     ///set delta time
     CameraController* cam_delta;
     CameraComponent* camSky;
@@ -565,13 +725,19 @@ void PlayState::OnDraw(double deltaTime)
 
 /////////////////////////////////////////////////////////////////////
     player->movePlayer();
-    cam_delta->update(deltaTime,camTransform,camSky);
+   // cam_delta->update(deltaTime,camTransform,camSky);
     camTransform->to_mat4();
     generateTimer++;
     if (generateTimer > counter)
     {
         player->generateCorona();
         counter = counter +180;
+    }
+    bottleTime++;
+    if (bottleTime > bottleCounter)
+    {
+        player->generateBottle();
+        bottleCounter = bottleCounter +360;
     }
     // get el vector w ab3to ll render system
 
@@ -597,4 +763,12 @@ void PlayState::OnExit()
         for (int j=0;j< comp.size() ;j++)
             comp[j]->onDeleteState();
     }
+}
+int PlayState::getHealth()
+{
+    return health;
+}
+int PlayState::getfinishFlag()
+{
+    return finishFlag;
 }

@@ -13,7 +13,7 @@
 
 struct SkyLight {
     bool enabled = true;
-    glm::vec3 top_color = {0,0,0}, middle_color{0,0,0}, bottom_color{0,0,0};
+    glm::vec3 top_color = {0.25, 0.3, 0.5}, middle_color{0.35, 0.35, 0.4}, bottom_color{0.25, 0.25, 0.25};
 };
 
 class PlayState : public State {
@@ -29,8 +29,10 @@ class PlayState : public State {
     GLuint sampler;
     double generateTimer=0;
     int counter=180;
-
-
+    int bottleTime=0;
+    int bottleCounter = 400;
+    int health = 100;
+    int finishFlag =0;
     GAME::Application* application;
     int Height;
     int Width;
@@ -44,6 +46,8 @@ class PlayState : public State {
     void generateCorona();
   //  int getHeight();
   //  int getWidth();
+    int getHealth();
+    int getfinishFlag();
     void OnEnter() ;
     void OnDraw(double deltaTime);
     void OnExit();

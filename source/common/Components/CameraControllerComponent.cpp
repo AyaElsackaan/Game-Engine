@@ -70,6 +70,9 @@ void CameraController::update(double delta_time,TransformComponent* t,CameraComp
     if ((t->getPosition() != position) || t->getRotation() != temp)
     {
         cam->setFlags();
+        float s=glm::cos(yaw);
+        //float p =  glm::sin(yaw) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0);
+       std::cout << s << " , "  << std::endl;
         t->setRotation(glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
         t->setPosition(position);
     }

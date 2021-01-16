@@ -18,10 +18,10 @@ class Texture2D {
      Texture2D(const char* path);
      void bind();
      ~Texture2D();
-
+  //  void resize(int,int);
      Texture2D(Texture2D const &) = delete;
      Texture2D &operator=(Texture2D const &) = delete;
-
+    
     };
 
 #endif //MATERIAL_H

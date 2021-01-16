@@ -17,6 +17,10 @@ void Texture2D::bind()
 {
       glBindTexture(GL_TEXTURE_2D,texture);
 }
+// void Texture2D::resize(int w,int h)
+// {
+//     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+// }
 
 Texture2D::~Texture2D()
 {

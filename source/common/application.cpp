@@ -312,11 +312,22 @@ int GAME::Application::run() {
         
         // Call onDraw, in which we will draw the current frame, and send to it the time difference between the last and current frame
        // msh mehtaga momken anade bl base 3ala tol
-
             CurrentState->OnDraw(current_frame_time - last_frame_time);
-
-             
-       
+            PlayState* play;
+             play = dynamic_cast<PlayState*>( CurrentState);
+            
+            if (play !=NULL)
+            {
+                int health = play->getHealth();
+                if (health == 0)
+                {   // game over menu
+                    std::cout << " GAME OVER !!" <<std::endl;
+                }
+                if (play->getfinishFlag() == 1)
+                {
+                    std::cout << " Level Completed !!" <<std::endl; // level complete menu
+                }
+            } 
        
       //  onDraw(current_frame_time - last_frame_time);
         last_frame_time = current_frame_time; // Then update the last frame start time (this frame is now the last frame)

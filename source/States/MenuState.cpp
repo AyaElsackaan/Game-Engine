@@ -1,7 +1,9 @@
 #include "MenuState.h"
 
-MenuState::MenuState()
-{}
+MenuState::MenuState(int menu)
+{
+    current_Menu=menu;
+}
 
 void MenuState::setApplication(GAME::Application* app)
  {
@@ -41,7 +43,14 @@ void MenuState::OnEnter()
     GAME::texture_utils::loadImage(texture, "../../assets/images/common/WonMenu.JPG");
     textures["Won"] = texture;
 
-     current_texture_name = "mainmenu";
+    if (current_Menu==0)
+        current_texture_name = "mainmenu";
+    else if (current_Menu==1)
+        current_texture_name = "gameover";
+    else if (current_Menu==2)
+        current_texture_name = "nextlevel";
+    else if (current_Menu==3)
+        current_texture_name = "Won";
 
     glClearColor(0, 0, 0, 1);
 }

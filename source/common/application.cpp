@@ -268,7 +268,25 @@ int GAME::Application::run() {
             {
             break;
             }
-        }        
+        } 
+        if (ps !=NULL)
+        {
+            int health = ps->getHealth();
+            if (health == 0)
+            {   // game over menu
+                std::cout << " GAME OVER !!" <<std::endl;
+                ms = new MenuState();
+                NextState = ms;     
+
+            }
+            if (ps->getfinishFlag() == 1)
+            {
+                std::cout << " Level Completed !!" <<std::endl; // level complete menu
+                ms = new MenuState();
+                NextState = ms;     
+            }
+        } 
+              
         /// Check State
         if(NextState != NULL)
         {
@@ -322,6 +340,8 @@ int GAME::Application::run() {
                 if (health == 0)
                 {   // game over menu
                     std::cout << " GAME OVER !!" <<std::endl;
+                   // play = dynamic_cast<PlayState*>( CurrentState);
+
                 }
                 if (play->getfinishFlag() == 1)
                 {

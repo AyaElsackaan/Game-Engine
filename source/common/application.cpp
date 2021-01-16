@@ -262,7 +262,7 @@ int GAME::Application::run() {
         if (ps !=NULL)
         {
             int health = ps->getHealth();
-            if (health == 0)
+            if (health <= 0)
             {   // game over menu
                 std::cout << " GAME OVER !!" <<std::endl;
                 ms = new MenuState(1);

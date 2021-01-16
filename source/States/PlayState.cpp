@@ -101,12 +101,20 @@ void PlayState::OnEnter()
         Texture2D* texturem2 = new Texture2D( "../../assets/images/common/materials/asphalt/roughness.jpg");
         textures["mask_roughness"] = texturem2;
         
-          Texture2D* textureroad = new Texture2D("../../assets/images/common/materials/asphalt/road.jpg");
+        Texture2D* textureroad = new Texture2D("../../assets/images/common/materials/asphalt/road.jpg");
         textures["road_albedo"] = textureroad;
         Texture2D* textureroad1 = new Texture2D( "../../assets/images/common/materials/asphalt/specular.jpg");
         textures["road_specular"] = textureroad1;
         Texture2D* textureroad2 = new Texture2D( "../../assets/images/common/materials/asphalt/roughness.jpg");
         textures["road_roughness"] = textureroad2;
+
+        Texture2D* textureground = new Texture2D("../../assets/images/common/materials/metal/albedo.jpg");
+        textures["ground_albedo"] = textureground;
+        Texture2D* textureground1 = new Texture2D( "../../assets/images/common/materials/metal/specular.jpg");
+        textures["ground_specular"] = textureground1;
+        Texture2D* textureground2 = new Texture2D( "../../assets/images/common/materials/metal/roughness.jpg");
+        textures["ground_roughness"] = textureground2;
+
 
         Texture2D* texture = new Texture2D("../../assets/models/char/Plastic_4K_Diffuse.jpg");
         textures["among_albedo"] = texture;
@@ -204,7 +212,7 @@ void PlayState::OnEnter()
     material->AddUniforms("albedo_tint",temp);
     pi.first = texture1;
     material->AddUniforms("specular_map",pi);
-    glm::vec3 temp2 = {0.0f, 1.0f, 0.0f};
+    glm::vec3 temp2 = {1.0f, 1.0f, 1.0f};
     material->AddUniforms("specular_tint" ,temp2);
     pi.first = texture2;
     material->AddUniforms("roughness_map",pi);
@@ -401,7 +409,7 @@ player = new playerSystem(E1,healthbar,application);
     ////// MeshRanderer Component
     Component* bottlemesh =new MeshRenderer(0,bottlematerial,&*(meshes["bottle"]));
    /////// Transform Component
-    glm::vec3 bottlepos={5,0,0};
+    glm::vec3 bottlepos={5,2,0};
     glm::vec3 bottlerot={350,5,0};
     glm::vec3 bottlesc={0.2,0.2,0.2};
     Component* bottletransform =new TransformComponent(1,bottlepos,bottlerot, bottlesc,NULL);
@@ -558,7 +566,7 @@ player = new playerSystem(E1,healthbar,application);
    /////// Transform Component
     glm::vec3 roadpos={0,0,0};
     glm::vec3 roadrot={0,0,0};
-    glm::vec3 roadsc={10,1,8000};
+    glm::vec3 roadsc={10,1,6000};
     Component* roadtransform =new TransformComponent(1,roadpos,roadrot,roadsc,NULL);
     TransformComponent* roadTransform;
     roadTransform = dynamic_cast<TransformComponent*>(roadtransform);
@@ -632,7 +640,7 @@ player = new playerSystem(E1,healthbar,application);
     ////// MeshRanderer Component
     Component* housemesh =new MeshRenderer(0,housematerial,&*(meshes["house"]));
    /////// Transform Component
-    glm::vec3 housepos={0,0,-8800};
+    glm::vec3 housepos={0,0,-6800};
     glm::vec3 houserot={0,0,0};
     glm::vec3 housesc={10,10,10};
     Component* housetransform =new TransformComponent(1,housepos,houserot,housesc,NULL);
@@ -645,7 +653,84 @@ player = new playerSystem(E1,healthbar,application);
     house->addComponent(housemesh);
     house->addComponent(housetransform);
 
-      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+       ////////////////////////////////////////// ground ////////////////////////////////////
+
+    Entity* ground=new Entity();
+    /// Set Material
+    ///// Material
+    Material* groundmaterial = new Material();
+    
+    alpha = 1;
+
+   /// Set RenderState
+    RenderState* groundstate = new RenderState();
+    if (alpha == 1)
+    {
+        groundstate->Opaque = true; // 3ashan el tint akher haga feh b 1
+        groundstate->Enable_DepthTesting = true;
+    }
+    else
+    {
+        groundstate->Opaque = false; // 3ashan el tint akher haga feh b 1
+        groundstate->Enable_DepthTesting = true;
+    }
+    groundstate->depth_function = GL_LEQUAL;
+    groundstate->enable_transparent_depth_write = true;
+    groundstate->Enable_Culling = true;
+    groundstate->culled_face = GL_BACK;
+
+    groundstate->front_face_winding = GL_CCW;
+    groundstate->Enable_Blending = true;
+    groundstate->blend_equation = GL_FUNC_ADD;
+    groundstate->blend_source_function = GL_SRC_ALPHA;
+    groundstate->blend_destination_function = GL_ONE_MINUS_SRC_ALPHA;
+    groundstate->blend_constant_color = {1.0f,1.0f,1.0f,1.0f};
+    groundstate->enable_alpha_to_coverage = false;
+    groundstate->enable_alpha_test = false;
+    groundstate->alpha_test_threshold = 0.5;
+    
+    groundmaterial->setState(groundstate);
+    ///
+    groundmaterial->AddUniforms("tint", glm::vec4(1.0,0.0, 0.0, 1));
+    groundmaterial->AddUniforms("alpha",alpha);
+    //pair<Texture2D*,Sampler2D*> pi;
+    pi.first = textureground;
+    pi.second = sampler;
+    groundmaterial->AddUniforms("albedo_map", pi);
+    groundmaterial->AddUniforms("albedo_tint",temp);
+    pi.first = textureground1;
+    groundmaterial->AddUniforms("specular_map",pi);
+    groundmaterial->AddUniforms("specular_tint" ,temp2);
+    pi.first = textureground2;
+    groundmaterial->AddUniforms("roughness_map",pi);
+    groundmaterial->AddUniforms("roughness_range",temps);
+    pi.first = moon; 
+    groundmaterial->AddUniforms("emissive_map",pi);
+    groundmaterial->AddUniforms("emissive_tint",temp1);
+    groundmaterial->setShader(&program);
+     ////// Mesh
+    meshes["ground"] = std::make_unique<GAME::Mesh>();
+       GAME::mesh_utils::loadOBJ(*(meshes["ground"]), "../../assets/models/road/road.obj");
+
+    ////// MeshRanderer Component
+    Component* groundmesh =new MeshRenderer(0,groundmaterial,&*(meshes["ground"]));
+   /////// Transform Component
+    glm::vec3 groundpos={0,-2,0};
+    glm::vec3 groundrot={0,0,0};
+    glm::vec3 groundsc={12,1,6000};
+    Component* groundtransform =new TransformComponent(1,groundpos,groundrot,groundsc,NULL);
+    TransformComponent* groundTransform;
+    groundTransform = dynamic_cast<TransformComponent*>(groundtransform);
+   // roadTransform->setParent(camTransform);
+    //TempTransform->setParent(TempTrans); // set cube as parent for sphere
+
+   ///// Adding Component
+    ground->addComponent(groundmesh);
+    ground->addComponent(groundtransform);
+       
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+      
         meshes["cube"] = std::make_unique<GAME::Mesh>();
         GAME::mesh_utils::Cuboid(*(meshes["cube"]));
 
@@ -662,11 +747,12 @@ player = new playerSystem(E1,healthbar,application);
     
 
     player->addObject(E1);
+    player->addObject(ground);
     player->addObject(road);
     player->addObject(bottle);
     player->addObject(house);
     player->addObject(healthbar);
-   
+    
     
 
  //////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -48,9 +48,18 @@ void playerSystem::checkCollision(TransformComponent* p)
                if (health > 0)
                {
                     health -= 10;
-                    glm::vec3 scale = healthTransform->getScale();
-                    healthTransform->setScale(glm::vec3{scale.x - 20,scale.y,scale.z});
-                    cout << health <<endl;
+                    if (health <= 0)
+                    {
+                        glm::vec3 scale = healthTransform->getScale();
+                        healthTransform->setScale(glm::vec3{0,scale.y,scale.z});
+                        cout << health <<endl;
+                    }
+                    else
+                    {
+                        glm::vec3 scale = healthTransform->getScale();
+                        healthTransform->setScale(glm::vec3{scale.x - 20,scale.y,scale.z});
+                        cout << health <<endl;
+                    }
                }
 
                 TransformComponent* coronaTransform;
@@ -103,9 +112,9 @@ void  playerSystem::movePlayer()
 
     if (flag == 0)
     {       
-       position.z = position.z - 1 ;
+       position.z = position.z - 1.5 ;
     }
-    if (position.z <= -8760)
+    if (position.z <= -6760)
         flag =1;
     if(application->getKeyboard().isPressed(GLFW_KEY_F)) 
     {
@@ -224,7 +233,7 @@ void  playerSystem::generateCorona()
                     random = std::rand() % 80;
             }while(random < 50);
 
-                int  randomx = std::rand() % 10;
+                int  randomx = std::rand() % 8;
                 int  randSign = std::rand() % 10;
 
             glm::vec3 position;

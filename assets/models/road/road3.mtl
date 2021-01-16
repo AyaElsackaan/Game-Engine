@@ -1,0 +1,13 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl road
+Ns 96.078443
+Ka 0.027273 0.027273 0.027273
+Kd 0.640000 0.640000 0.640000
+Ks 0.527273 0.527273 0.527273
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 3
+map_Kd -o 7.400000 0.000000 0.000000 -s 1.200000 1.000000 1.000000 C:\\Users\\aliaa\\Desktop\\Phase 2\\Game-Engine\\assets\\images\\common\\materials\\asphalt\\road.jpg

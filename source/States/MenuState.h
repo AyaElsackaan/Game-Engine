@@ -27,11 +27,13 @@ class MenuState : public State {
     GAME::Application* application;
     int Height;
     int Width;
+
+    int current_Menu;
    
     
 
 public:
-    MenuState();
+    MenuState(int menu);
     void setApplication(GAME::Application* app);
    
 void setHeight(int h);

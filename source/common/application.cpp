@@ -121,10 +121,7 @@ void GAME::Application::configureOpenGL() {
 
 void GAME::Application::onInitialize()
 {
-            // PlayState* ps = new PlayState();
-            // this->CurrentState = ps;
-            // this->NextState = NULL; 
-            MenuState* ms = new MenuState();
+            MenuState* ms = new MenuState(0);  //start at main menu 
             this->CurrentState = ms;
             this->NextState = NULL;
 }        
@@ -218,13 +215,6 @@ int GAME::Application::run() {
         ms->setApplication(this);
         ms->OnEnter();  
     }
-    
-    
-   /* CurrentState->setHeight(h);
-    CurrentState->setWidth(w);
-    CurrentState->setApplication(this);
-    CurrentState->OnEnter();
-*/
 
     // The time at which the last frame started. But there was no frames yet, so we'll just pick the current time.
     double last_frame_time = glfwGetTime();
@@ -275,14 +265,14 @@ int GAME::Application::run() {
             if (health == 0)
             {   // game over menu
                 std::cout << " GAME OVER !!" <<std::endl;
-                ms = new MenuState();
+                ms = new MenuState(1);
                 NextState = ms;     
 
             }
             if (ps->getfinishFlag() == 1)
             {
                 std::cout << " Level Completed !!" <<std::endl; // level complete menu
-                ms = new MenuState();
+                ms = new MenuState(2);
                 NextState = ms;     
             }
         } 

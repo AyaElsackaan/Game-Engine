@@ -32,7 +32,7 @@ public:
     }
     
  
-    void RenderAll(vector<Entity*> Ent,Entity* world,vector<Entity*> lights)
+    void RenderAll(vector<Entity*> Ent,Entity* world,vector<Entity*> lights,SkyLight skylight)
     {
         //// Get Camera Component
           CameraComponent* cam;
@@ -146,11 +146,13 @@ public:
            glDepthFunc(Rstate->depth_function);
            if(Rstate->Enable_Culling) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
            glCullFace(Rstate->culled_face);
+
            glFrontFace(Rstate->front_face_winding);
             glEnable(GL_BLEND);
+
             glBlendEquation(Rstate->blend_equation);
+
             glBlendFunc(Rstate->blend_source_function, Rstate->blend_destination_function);
-           //glBlendColor(Rstate->blend_constant_color.r, Rstate->blend_constant_color.g, Rstate->blend_constant_color.b, Rstate->blend_constant_color.a);
 
            if(Rstate->enable_alpha_to_coverage) glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
             else glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);       
@@ -204,9 +206,9 @@ public:
                 mesh->getMaterial()->getShader()->set("view_projection", cam->getVPMatrix(CameraTransform));
                 mesh->getMaterial()->getShader()->set("object_to_world", tranf->to_mat4());
                 mesh->getMaterial()->getShader()->set("object_to_world_inv_transpose", glm::inverse(tranf->to_mat4()), true);              
-                mesh->getMaterial()->getShader()->set("sky_light.top_color",  glm::vec3(0.0f));
-                mesh->getMaterial()->getShader()->set("sky_light.middle_color", glm::vec3(0.0f));
-                mesh->getMaterial()->getShader()->set("sky_light.bottom_color", glm::vec3(0.0f));     
+                mesh->getMaterial()->getShader()->set("sky_light.top_color", skylight.top_color);
+                mesh->getMaterial()->getShader()->set("sky_light.middle_color", skylight.middle_color);
+                mesh->getMaterial()->getShader()->set("sky_light.bottom_color", skylight.bottom_color);     
             // glm::vec4 shadertint = std::any_cast<glm::vec4>( mesh->getMaterial()->getUniforms("tint"));
             // mesh->getMaterial()->getShader()->set("tint", shadertint);  
                 glm::vec3 s = std::any_cast<glm::vec3>( mesh->getMaterial()->getUniforms("albedo_tint"));

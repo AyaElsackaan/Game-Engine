@@ -33,6 +33,7 @@ class MenuState : public State {
     
 
 public:
+    int getCurrentMenu();
     MenuState(int menu);
     void setApplication(GAME::Application* app);
    

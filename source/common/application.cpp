@@ -245,6 +245,7 @@ int GAME::Application::run() {
 
         // Get the current time (the time at which we are starting the current frame).
         double current_frame_time = glfwGetTime();
+
          ps = dynamic_cast<PlayState*>( CurrentState);
         ms = dynamic_cast<MenuState*>( CurrentState);
         if(ms)
@@ -252,6 +253,15 @@ int GAME::Application::run() {
             if(this->getKeyboard().isPressed(GLFW_KEY_SPACE))
             {
                 ps=new PlayState();
+                int level = ms->getCurrentMenu();
+                if (level == 2)
+                {
+                    ps->setLevel(2);
+                }
+                else
+                {
+                    ps->setLevel(1);
+                }
                 NextState=ps;
             } 
             if(this->getKeyboard().isPressed(GLFW_KEY_ESCAPE))
@@ -264,15 +274,17 @@ int GAME::Application::run() {
             int health = ps->getHealth();
             if (health <= 0)
             {   // game over menu
-                std::cout << " GAME OVER !!" <<std::endl;
+                int level = ps->getLevel();
                 ms = new MenuState(1);
                 NextState = ms;     
-
             }
             if (ps->getfinishFlag() == 1)
             {
-                std::cout << " Level Completed !!" <<std::endl; // level complete menu
-                ms = new MenuState(2);
+                 int level = ps->getLevel();
+                if(level == 1)
+                    ms = new MenuState(2);
+                else
+                    ms = new MenuState(3);
                 NextState = ms;     
             }
         } 
@@ -292,25 +304,25 @@ int GAME::Application::run() {
             int w,h;
             glfwGetFramebufferSize(window, &w, &h);
             
-          ps = dynamic_cast<PlayState*>( CurrentState);
-          ms = dynamic_cast<MenuState*>( CurrentState);
-        if(ps)
-        {
-            ps->setHeight(h);
-            ps->setWidth(w);
-            ps->setApplication(this);
-            ps->OnEnter();
-    
-        }
-        else
-        {
-            
-            ms->setHeight(h);
-            ms->setWidth(w);
-            ms->setApplication(this);
-            ms->OnEnter();  
-        }
+            ps = dynamic_cast<PlayState*>( CurrentState);
+            ms = dynamic_cast<MenuState*>( CurrentState);
+            if(ps)
+            {
+                ps->setHeight(h);
+                ps->setWidth(w);
+                ps->setApplication(this);
+                ps->OnEnter();
         
+            }
+            else
+            {
+                
+                ms->setHeight(h);
+                ms->setWidth(w);
+                ms->setApplication(this);
+                ms->OnEnter();  
+            }
+            
          
         }
         
@@ -321,23 +333,6 @@ int GAME::Application::run() {
         // Call onDraw, in which we will draw the current frame, and send to it the time difference between the last and current frame
        // msh mehtaga momken anade bl base 3ala tol
             CurrentState->OnDraw(current_frame_time - last_frame_time);
-            PlayState* play;
-             play = dynamic_cast<PlayState*>( CurrentState);
-            
-            if (play !=NULL)
-            {
-                int health = play->getHealth();
-                if (health == 0)
-                {   // game over menu
-                    std::cout << " GAME OVER !!" <<std::endl;
-                   // play = dynamic_cast<PlayState*>( CurrentState);
-
-                }
-                if (play->getfinishFlag() == 1)
-                {
-                    std::cout << " Level Completed !!" <<std::endl; // level complete menu
-                }
-            } 
        
       //  onDraw(current_frame_time - last_frame_time);
         last_frame_time = current_frame_time; // Then update the last frame start time (this frame is now the last frame)

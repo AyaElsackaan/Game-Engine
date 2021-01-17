@@ -17,27 +17,24 @@ class playerSystem {
         int flag = 0;
         GAME::Application* application;
         vector<Entity*> AllEntities;  // coronas + powerups
-        vector<Entity*> CoronaS;
-      //  Entity* road;
-      //  Entity corona;
-
-        double delta_time;
-
+        bool shield =false;
 
 
     public:
       playerSystem(Entity* p, Entity* H,GAME::Application* app);
-      void checkCollision(TransformComponent* p);
-      void  movePlayer();
+      void checkCollision(TransformComponent* p,int level);
+      void  movePlayer(int level);
       int getHealth();
       int getFlag();
+      void setshield(bool s);
+      bool getshield();
       void addObject(Entity* obj);
       vector<Entity*> getUpdatedVector();
 
-     void addCorona(Entity* c);
     //////////generate ////////
     void generateCorona();
     void generateBottle();
+    void generateMask();
 
       
 

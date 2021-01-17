@@ -84,3 +84,7 @@ void MenuState::OnExit()
             glDeleteTextures(1, &texture);
         textures.clear();
 }
+int MenuState::getCurrentMenu()
+{
+    return current_Menu;
+}

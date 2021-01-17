@@ -252,18 +252,27 @@ int GAME::Application::run() {
         {
             if(this->getKeyboard().isPressed(GLFW_KEY_SPACE))
             {
-                ps=new PlayState();
-                int level = ms->getCurrentMenu();
-                if (level == 2)
+                if (ms->getCurrentMenu() ==3 )
                 {
-                    ps->setLevel(2);
+                    ms = new MenuState(0);
+                    NextState = ms;    
                 }
                 else
                 {
-                    ps->setLevel(1);
-                }
-                NextState=ps;
-            } 
+
+                    ps=new PlayState();
+                    int level = ms->getCurrentMenu();
+                    if (level == 2)
+                    {
+                        ps->setLevel(2);
+                    }
+                    else
+                    {
+                        ps->setLevel(1);
+                    }
+                    NextState=ps;
+                } 
+            }
             if(this->getKeyboard().isPressed(GLFW_KEY_ESCAPE))
             {
             break;

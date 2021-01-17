@@ -51,6 +51,7 @@ public:
                     break;
             } 
 
+
         /// Collecting light
         const int MAX_LIGHT_COUNT = 16;
          vector<LightComponent*> ShaderLights;

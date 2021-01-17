@@ -264,7 +264,7 @@ void PlayState::Initialize_Entities(int level)
     Component* mesh=new MeshRenderer(0,material,&*(meshes["character"]));
    /////// Transform Component
     glm::vec3 pos={0,1,0};
-    glm::vec3 rot={0,9,0};
+    glm::vec3 rot={0,9.2,0};
     glm::vec3 sc={0.05,0.05,0.05};
     Component* transform=new TransformComponent(1,pos, rot, sc,NULL);
     TransformComponent* TempTrans;
@@ -430,7 +430,7 @@ player = new playerSystem(E1,healthbar,application);
     /////// Transform Component
         glm::vec3 coronapos={20,5,0};
         glm::vec3 coronarot={0,0,0};
-        glm::vec3 coronasc={1,1,1};
+        glm::vec3 coronasc={0.1,0.1,0.1};
         Component* coronatransform =new TransformComponent(1,coronapos,coronarot, coronasc,NULL);
         TransformComponent* coronaTransform;
         coronaTransform = dynamic_cast<TransformComponent*>(coronatransform);

@@ -90,7 +90,6 @@ void PlayState::OnEnter()
 }
 void PlayState::OnDraw(double deltaTime)
 {
-    std::cout << "level " << level << endl;
     /// check if the level completed , or health =0 -> will be used in application.cpp
     health = player->getHealth();
     finishFlag = player->getFlag();
@@ -155,14 +154,15 @@ void PlayState::OnDraw(double deltaTime)
         if (shieldGenerate > shieldcounter)
         {
             player->generateMask();
-            shieldcounter = shieldcounter +810;
+            shieldcounter = 1000;
+            shieldGenerate = 0;
         }
 
     }
 /////////////////////////////Render System//////////////////////////////
     RendererSystem* renderEntities = new RendererSystem();
 
-    renderEntities->RenderAll(player->getUpdatedVector(),World[0],lights,sky_light);
+    renderEntities->RenderAll(player->getUpdatedVector(),World[0],lights,sky_light,player->getshield());
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -423,14 +423,14 @@ player = new playerSystem(E1,healthbar,application);
         coronamaterial->setShader(&program);
         ////// Mesh
         meshes["corona"] = std::make_unique<GAME::Mesh>();
-       // GAME::mesh_utils::loadOBJ(*(meshes["corona"]), "../../assets/models/corona/corona_virus.obj");
-        GAME::mesh_utils::Sphere(*(meshes["corona"]), {64, 32}, false);
+       GAME::mesh_utils::loadOBJ(*(meshes["corona"]), "../../assets/models/corona/corona_virus.obj");
+       // GAME::mesh_utils::Sphere(*(meshes["corona"]), {64, 32}, false);
         ////// MeshRanderer Component
         Component* coronamesh =new MeshRenderer(0,coronamaterial,&*(meshes["corona"]));
     /////// Transform Component
         glm::vec3 coronapos={20,5,0};
         glm::vec3 coronarot={0,0,0};
-        glm::vec3 coronasc={3,3,3};
+        glm::vec3 coronasc={1,1,1};
         Component* coronatransform =new TransformComponent(1,coronapos,coronarot, coronasc,NULL);
         TransformComponent* coronaTransform;
         coronaTransform = dynamic_cast<TransformComponent*>(coronatransform);
@@ -727,7 +727,7 @@ void PlayState::Initialize_Lights()
     spot_angle s;
     s.inner = 0.78539816339;
     s.outer = 1.57079632679;
-    Component* SpotL=new LightComponent(1,LightType::SPOT,true,s,{1,0,0},{0.0f, 0.0f, 1.0f});
+    Component* SpotL=new LightComponent(1,LightType::SPOT,false,s,{1,0,0},{0.0f, 0.0f, 1.0f});
     LightComponent* SpotLight;
     SpotLight = dynamic_cast<LightComponent*>(SpotL);
     Entity* spotEntity = new Entity();

@@ -32,7 +32,7 @@ public:
     }
     
  
-    void RenderAll(vector<Entity*> Ent,Entity* world,vector<Entity*> lights,SkyLight skylight)
+    void RenderAll(vector<Entity*> Ent,Entity* world,vector<Entity*> lights,SkyLight skylight,bool shield)
     {
         //// Get Camera Component
           CameraComponent* cam;
@@ -102,14 +102,22 @@ public:
                RenderState* state = new RenderState();
                state = meshT->getMaterial()->getState(); 
                 double distanceCT  = distance(tranf->getPosition(),CameraTransform->getPosition());
-               if (state->Opaque == true)
-               {
-                   Opaque.push_back(make_pair(Ent[i],distanceCT));
-               }
-               else
-               {
+              if (Ent[i]->getID() == 1 && shield == true) // da el character
+                {
                     Transparent.push_back(make_pair(Ent[i],distanceCT));       
-               }
+                }
+                else
+                {
+                    if (state->Opaque == true)
+                    {
+                        Opaque.push_back(make_pair(Ent[i],distanceCT));
+                    }
+                    else
+                    {
+                        Transparent.push_back(make_pair(Ent[i],distanceCT));       
+                    }
+                    
+                }
                
             }
         }
@@ -159,8 +167,16 @@ public:
            
             glUseProgram(*(mesh->getMaterial()->getShader())); 
 
-            float shaderalpha = std::any_cast<float>( mesh->getMaterial()->getUniforms("alpha"));
-            mesh->getMaterial()->getShader()->set("alpha", shaderalpha);  
+           if (shield == true && Opaque[i].first->getID() == 1)
+            {
+
+                mesh->getMaterial()->getShader()->set("alpha",0.4f);  
+            }
+            else
+            {
+                float shaderalpha = std::any_cast<float>( mesh->getMaterial()->getUniforms("alpha"));
+                mesh->getMaterial()->getShader()->set("alpha", shaderalpha);  
+            }
                 ///////////////////////////////////// Send Light to Shader /////////////////////////////////////////////
                 int light_count = 0;
                  for (int j =0;j< ShaderTransform.size();j++)

@@ -60,8 +60,8 @@ void playerSystem::checkCollision(TransformComponent* p,int level)
                         healthTransform->setScale(glm::vec3{scale.x - 20,scale.y,scale.z});
                         cout << health <<endl;
                     }
+                    transform->setPosition(glm::vec3{0,0,0});
                }
-                transform->setPosition(glm::vec3{0,0,0});
            }
        }
        else if (AllEntities[i]->getID() == 3)
@@ -105,8 +105,23 @@ void  playerSystem::movePlayer(int level)
     glm::vec3 rot = characterTransform->getRotation();
 
     if (flag == 0)
-    {       
-       position.z = position.z - 1.5 ;
+    {
+        if(level == 1) 
+        {
+            if (position.z >= -2250)      
+                position.z = position.z - 1 ;
+            else if(position.z < -2250 && position.z >= -4500)
+                position.z = position.z - 1.5;
+            else if (position.z < -4500 && position.z >= -6760)
+                position.z = position.z - 2;
+        }
+        else
+        {
+            if (position.z >= -3380)      
+                position.z = position.z - 2;
+            else if(position.z < -3380 && position.z >= -6760)
+                position.z = position.z - 2.5;
+        }
     }
     if (position.z <= -6760)
         flag =1;
